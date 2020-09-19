@@ -1,4 +1,4 @@
-﻿/*
+/*
     • Butsie is a brown cat,
     • Cornie is a black cat,
     • Sam is a red cat,

@@ -3,82 +3,82 @@ import java.util.Arrays;
 
 public class SubStringsFinder {
 
-    static long[] substringsPositions = new long[10];
+    static int SECTION_LENGTH = 100000;
 
     /**
-     * The function finds all substrings of value "substring" in file with name "filename"
-     * @param filename name of the file to check for substrings
-     * @param substring value of substring to find in file
-     * @return an array of position, where substrings are started
+     * The function finds all occurrences of substring "substring"
+     * in the file with name "filename"
+     *
+     * @param filename  name of input file
+     * @param substring content of substring
+     * @return array of position of occurrences
      * @throws IOException
      */
-    public static long[] findSubStringInFile(String filename, String substring) throws IOException {
-        File inputFile = new File(filename);
+    public static long[] findSubstringInFile(String filename, String substring) throws IOException {
 
-        if (!inputFile.canRead()) {
-            System.out.print("Unable to open file with name: " + filename);
+        long[] answersArray = new long[2];
+        int answerCount = 0;
+
+        int substringLength = substring.length();
+        int countOfcharactersRead;
+        int stringNumber = 0;
+
+        FileReader filereader = new FileReader(filename);
+        BufferedReader input = new BufferedReader(filereader);
+
+        char[] substringReplecement = substring.toCharArray();
+        char[] chars = new char[SECTION_LENGTH + substringLength];
+
+        for (int i = 0; i < substringLength; i++) {
+            chars[i] = substring.charAt(i);
         }
 
-        FileReader buffer = new FileReader(inputFile);
+        for (int i = 0; i < substringLength; i++) {
+            char letter = substring.charAt(i);
+            if (i != 0 && letter == substring.charAt(0)) {
+                break;
+            }
+            substringReplecement[i] = (char) ((int) letter + 1);
+        }
 
-        int answersCount = 0;
-        int letter;
-        long position = 0;
+        input.read(chars, 0, substringLength);
+        while ((countOfcharactersRead = input.read(chars, substringLength, SECTION_LENGTH)) != -1) {
 
-        while ((letter = buffer.read()) != -1) {
+            String string = new String(chars).substring(0, countOfcharactersRead + substringLength);
 
-            if (letter == (int) substring.charAt(0)) {
-                long substringStartIndex = checkForSubstring(inputFile, position, substring);
-                if (substringStartIndex >= 0) {
-                    addAnswerToArray(answersCount, substringStartIndex);
-                    answersCount++;
+            if (countOfcharactersRead != SECTION_LENGTH) {
+                string = string.substring(0, countOfcharactersRead + substringLength);
+            }
+
+            while (string.contains(substring)) {
+                long answer = string.indexOf(substring) + stringNumber * SECTION_LENGTH;
+                if (answerCount == answersArray.length) {
+                    answersArray = Arrays.copyOf(answersArray, answersArray.length * 2 + 1);
                 }
+                answersArray[answerCount++] = answer;
+
+                string = string.replaceFirst(substring, new String(substringReplecement));
             }
 
-            position++;
+            if (countOfcharactersRead == SECTION_LENGTH) {
+                String newString = string.substring(SECTION_LENGTH, SECTION_LENGTH + substringLength);
+                string = string.substring(0, SECTION_LENGTH);
+                newString = newString.concat(string);
+                chars = newString.toCharArray();
+            }
+
+            stringNumber++;
         }
-        return Arrays.copyOf(substringsPositions, answersCount);
-    }
 
-    /**
-     * This function add element with value "answer" in array of substring position on place "onPlace".
-     * Moreover the function checks if it is necessary to increase array length
-     *
-     * @param onPlace where to insert an element
-     * @param answer  value of element to insert
-     */
-    private static void addAnswerToArray(int onPlace, long answer) {
-        if (substringsPositions.length == onPlace) {
-            substringsPositions = Arrays.copyOf(substringsPositions,
-                    substringsPositions.length * 2 + 1);
-        }
-        substringsPositions[onPlace] = answer;
-    }
 
-    /**
-     * Function checks if there is an occurrence of substring in file from position "offset"
-     *
-     * @param file      file to read
-     * @param offset    position, from where can possible substring begins
-     * @param substring text of substring to find
-     * @return beginning position of founded substring or -1, if there is no substring from position offset
-     * @throws IOException
-     */
-    private static long checkForSubstring(File file, long offset, String substring) throws IOException {
-
-        FileReader buffer = new FileReader(file);
-        buffer.skip(offset);
-
-        int letter;
-
-        for (int i = 0; i < substring.length(); i++) {
-            letter = buffer.read();
-
-            if (letter != (int) substring.charAt(i)) {
-                return -1;
+        if (stringNumber == 0) {
+            String stringFromChars = new String(chars).trim();
+            if (substring.equals(stringFromChars)) {
+                answersArray[answerCount++] = 0;
             }
         }
 
-        return offset;
+        return Arrays.copyOf(answersArray, answerCount);
     }
+
 }
