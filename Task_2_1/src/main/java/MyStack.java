@@ -1,7 +1,9 @@
 import java.util.Arrays;
+import java.util.EmptyStackException;
+import java.util.Iterator;
 
-public class MyStack<T> {
-    static int DEFAULT_STACK_SIZE = 10;
+public class MyStack<T> implements Iterable<T> {
+    private static final int DEFAULT_STACK_SIZE = 10;
     private T[] stackArray;
     private int stackSize;
 
@@ -11,15 +13,15 @@ public class MyStack<T> {
     public MyStack() {
         @SuppressWarnings("unchecked")
         T[] newStack = (T[]) new Object[DEFAULT_STACK_SIZE];
-        this.stackArray = newStack;
-        this.stackSize = 0;
+        stackArray = newStack;
+        stackSize = 0;
     }
 
     /**
      * The function increase the stack capacity
      */
     private void resizeArray() {
-        this.stackArray = Arrays.copyOf(stackArray, stackArray.length * 2 + 1);
+        stackArray = Arrays.copyOf(stackArray, stackArray.length * 2 + 1);
     }
 
     /**
@@ -27,7 +29,10 @@ public class MyStack<T> {
      * @return last added element from the top of the stack
      */
     T pop() {
-        return stackSize > 0 ? stackArray[--stackSize] : null;
+        if (stackSize == 0) {
+            throw new EmptyStackException();
+        }
+        return stackArray[--stackSize];
     }
 
     /**
@@ -47,5 +52,25 @@ public class MyStack<T> {
      */
     int size() {
         return stackSize;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new StackIterator();
+    }
+
+    class StackIterator implements Iterator<T> {
+
+        private int iteratorPosition = 0;
+
+        @Override
+        public boolean hasNext() {
+            return !(iteratorPosition == stackSize);
+        }
+
+        @Override
+        public T next() {
+            return stackArray[iteratorPosition++];
+        }
     }
 }

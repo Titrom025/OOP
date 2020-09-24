@@ -4,9 +4,11 @@ import org.junit.Test;
 import java.util.Random;
 import java.util.Stack;
 
-import static org.junit.Assert.*;
-
 public class MyStackTest {
+
+    private static final int RANDOM_TESTS_COUNT = 5000;
+    private static final int MINIMUM_CAPACITY = 100;
+    private static final int MAXIMUM_CAPACITY = 50000;
 
     @Test
     public void testMyStack1() {
@@ -26,7 +28,7 @@ public class MyStackTest {
         Assert.assertEquals(4, stackInt.size());
         Assert.assertEquals(555, (long) stackInt.pop());
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 3; i++) {
             stackInt.pop();
         }
         Assert.assertEquals(0, stackInt.size());
@@ -59,9 +61,6 @@ public class MyStackTest {
 
     @Test
     public void testMyStackRandom() {
-        int RANDOM_TESTS_COUNT = 5000;
-        int MINIMUM_CAPACITY = 100;
-        int MAXIMUM_CAPACITY = 50000;
         Random random = new Random();
 
         for (int i = 0; i < RANDOM_TESTS_COUNT; i++) {
@@ -87,5 +86,39 @@ public class MyStackTest {
             }
             Assert.assertEquals(stackLong.size(), myStackLong.size());
         }
+    }
+
+    @Test
+    public void testMyStackIterator() {
+        Random random = new Random();
+
+        MyStack<Long> myStackLong = new MyStack<Long>();
+        Stack<Long> stackLong = new Stack<Long>();
+
+        int capacity = random.nextInt(MAXIMUM_CAPACITY - MINIMUM_CAPACITY) + MINIMUM_CAPACITY;
+
+        for (int j = 0; j < capacity; j++) {
+            long value = random.nextLong();
+            stackLong.push(value);
+            myStackLong.push(value);
+        }
+
+        Assert.assertEquals(stackLong.size(), myStackLong.size());
+
+        long[] elementsOfMyStack = new long[capacity];
+        long[] elementsOfStack = new long[capacity];
+        int counter = 0;
+
+        for (Long number : myStackLong) {
+            elementsOfMyStack[counter++] = number;
+        }
+
+        counter = 0;
+
+        for (Long number : stackLong) {
+            elementsOfStack[counter++] = number;
+        }
+
+        Assert.assertArrayEquals(elementsOfStack, elementsOfMyStack);
     }
 }
