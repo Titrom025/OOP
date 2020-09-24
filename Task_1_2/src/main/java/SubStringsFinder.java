@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.Arrays;
 
-public class SubStringsFinder {
+public class SubstringsFinder {
 
     static int SECTION_LENGTH = 100000;
 
