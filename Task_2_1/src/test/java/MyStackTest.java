@@ -1,11 +1,14 @@
-import junit.framework.TestCase;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.Random;
 import java.util.Stack;
 
-public class StackTest extends TestCase {
+import static org.junit.Assert.*;
 
+public class MyStackTest {
+
+    @Test
     public void testMyStack1() {
         MyStack<Integer> stackInt = new MyStack<Integer>();
 
@@ -29,6 +32,7 @@ public class StackTest extends TestCase {
         Assert.assertEquals(0, stackInt.size());
     }
 
+    @Test
     public void testMyStack2() {
         MyStack<String> myStackString = new MyStack<String>();
         Stack<String> stackString = new Stack<String>();
@@ -53,6 +57,7 @@ public class StackTest extends TestCase {
         Assert.assertEquals(stackString.size(), myStackString.size());
     }
 
+    @Test
     public void testMyStackRandom() {
         int RANDOM_TESTS_COUNT = 5000;
         int MINIMUM_CAPACITY = 100;
@@ -83,5 +88,4 @@ public class StackTest extends TestCase {
             Assert.assertEquals(stackLong.size(), myStackLong.size());
         }
     }
-
 }
