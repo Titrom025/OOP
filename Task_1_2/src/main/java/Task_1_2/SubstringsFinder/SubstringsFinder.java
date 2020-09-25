@@ -1,9 +1,10 @@
+package Task_1_2.SubstringsFinder;
 import java.io.*;
 import java.util.Arrays;
 
 public class SubstringsFinder {
 
-    static int SECTION_LENGTH = 100000;
+    private static final int SECTION_LENGTH = 100000;
 
     /**
      * The function finds all occurrences of substring "substring"

@@ -1,3 +1,5 @@
+import Task_1_2.SubstringsFinder.SubstringsFinder;
+
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -5,11 +7,14 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Random;
 
 
 public class SubstringsFinderTest extends TestCase {
+
+    private static final int RANDOM_STRINGS_COUNT = 100000;
+    private static final int RANDOM_STRINGS_LENGTH = 100000;
+
     @Test
     public void testSubstringFinder1() {
 
@@ -74,8 +79,6 @@ public class SubstringsFinderTest extends TestCase {
 
         try {
             long[] answer = SubstringsFinder.findSubstringInFile("file10gb.txt", "StringToFind");
-
-            System.out.println(Arrays.toString(answer));
             System.out.println(answer.length);
         } catch (IOException var3) {
             var3.printStackTrace();
@@ -92,8 +95,8 @@ public class SubstringsFinderTest extends TestCase {
         try {
             outputFile = new FileOutputStream("file10gb.txt");
 
-            for (int i = 0; i < 100000; i++) {
-                outputFile.write(getRandowStringOfLengthN(100000).getBytes());
+            for (int i = 0; i < RANDOM_STRINGS_COUNT; i++) {
+                outputFile.write(getRandowStringOfLengthN(RANDOM_STRINGS_LENGTH).getBytes());
             }
         } catch (IOException e) {
             e.printStackTrace();
