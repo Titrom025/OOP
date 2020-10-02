@@ -73,10 +73,4 @@ public class MyStack<T> implements Iterable<T> {
             return stackArray[iteratorPosition++];
         }
     }
-
-
-
-    public T[] getArray() {
-        return stackArray;
-    }
 }

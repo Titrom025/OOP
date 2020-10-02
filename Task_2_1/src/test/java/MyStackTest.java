@@ -121,11 +121,4 @@ public class MyStackTest {
 
         Assert.assertArrayEquals(elementsOfStack, elementsOfMyStack);
     }
-
-    @Test
-    public void hehetest() {
-        MyStack<String> a = new MyStack<>();
-
-        String[] aa = a.getArray();
-    }
 }
