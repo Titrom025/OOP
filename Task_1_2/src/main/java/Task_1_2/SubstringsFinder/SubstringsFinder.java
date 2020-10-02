@@ -1,5 +1,6 @@
 package Task_1_2.SubstringsFinder;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class SubstringsFinder {
@@ -33,7 +34,7 @@ public class SubstringsFinder {
             inputFile = new File(file);
         }
 
-        FileReader filereader = new FileReader(inputFile);
+        FileReader filereader = new FileReader(inputFile, StandardCharsets.UTF_8);
         BufferedReader input = new BufferedReader(filereader);
 
         char[] chars = new char[SECTION_LENGTH + substringLength];
