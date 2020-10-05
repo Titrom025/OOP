@@ -7,7 +7,7 @@ import java.util.Random;
 public class SortingTest extends TestCase {
 
     public void testSortArray1() {
-        int[] arr = new int[]{13,15,9,-5,8,6,0,3,53,63,7,2,1,5,7,2};
+        int[] arr = new int[]{13,15,9,-5,8,6,0,3,53,63,7,2,1,5,7,3};
         int[] answer = arr.clone();
 
         Arrays.sort(answer);

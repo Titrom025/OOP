@@ -81,10 +81,6 @@ public class SubstringsFinderTest extends TestCase {
         }
     }
 
-
-    /**
-     * The function generates a file ~ 10 GB
-     */
     public void fileGenerator() {
         FileOutputStream outputFile;
         try {

@@ -7,7 +7,7 @@ import java.util.Stack;
 public class MyStackTest {
 
     private static final int RANDOM_TESTS_COUNT = 5000;
-    private static final int MINIMUM_CAPACITY = 100;
+    private static final int MINIMUM_CAPACITY = 1000;
     private static final int MAXIMUM_CAPACITY = 50000;
 
     @Test
