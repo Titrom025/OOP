@@ -1,8 +1,7 @@
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.function.Function;
+import java.util.Iterator;
 
-public class PriorityQueue<K extends Comparable<K>, V>{
+public class PriorityQueue<K extends Comparable<K>, V> implements Iterable<Pair<K, V>>{
 
     private Pair<K, V>[] queue = new Pair[2];
     private int elementsCount = 0;
@@ -10,14 +9,13 @@ public class PriorityQueue<K extends Comparable<K>, V>{
     /**
      * This function swap two elements with indexes firstIndex and secondIndex in array
      *
-     * @param array       array with elements to swap
      * @param firstIndex  index of first element
      * @param secondIndex index of second element
      */
-    private void swap(Pair<K, V>[] array, int firstIndex, int secondIndex) {
-        Pair<K, V> temp = array[firstIndex];
-        array[firstIndex] = array[secondIndex];
-        array[secondIndex] = temp;
+    private void swap(int firstIndex, int secondIndex) {
+        Pair<K, V> temp = queue[firstIndex];
+        queue[firstIndex] = queue[secondIndex];
+        queue[secondIndex] = temp;
     }
 
     /**
@@ -25,22 +23,20 @@ public class PriorityQueue<K extends Comparable<K>, V>{
      *
      * @param index index of element to sift down
      */
-    private void siftdown(Pair<K, V>[] array, int index, int size) {
+    private void siftdown(int index, int size) {
         int largest = index;
         int leftSon = index * 2 + 1;
         int rightSon = index * 2 + 2;
 
-        if (leftSon < size && array[leftSon].key.compareTo(array[largest].key) < 0) {
+        if (leftSon < size && queue[leftSon].key.compareTo(queue[largest].key) > 0) {
             largest = leftSon;
-        }
-
-        if (rightSon < size && array[rightSon].key.compareTo(array[largest].key) < 0) {
+        } else if (rightSon < size && queue[rightSon].key.compareTo(queue[largest].key) > 0) {
             largest = rightSon;
         }
 
         if (largest != index) {
-            swap(array, index, largest);
-            siftdown(array, largest, size);
+            swap(index, largest);
+            siftdown(largest, size);
         }
     }
 
@@ -52,7 +48,7 @@ public class PriorityQueue<K extends Comparable<K>, V>{
         int parent = (index - 1) / 2;
 
         if (queue[index].key.compareTo(queue[parent].key) > 0) {
-            swap(queue, index, parent);
+            swap(index, parent);
             siftup(parent);
         }
     }
@@ -70,7 +66,31 @@ public class PriorityQueue<K extends Comparable<K>, V>{
 
     public V extract_max() {
 
-        return queue[0].value;
+        V maximum = queue[0].value;
+        swap(0, --elementsCount);
+        siftdown(0, elementsCount);
+
+        return maximum;
+    }
+
+    @Override
+    public Iterator<Pair<K, V>> iterator() {
+        return new PriorityQueueIterator();
+    }
+
+    class PriorityQueueIterator implements Iterator<Pair<K, V>> {
+
+        private int iteratorPosition = 0;
+
+        @Override
+        public boolean hasNext() {
+            return !(iteratorPosition == elementsCount);
+        }
+
+        @Override
+        public Pair<K, V> next() {
+            return queue[iteratorPosition++];
+        }
     }
 }
 
