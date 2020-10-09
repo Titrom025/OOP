@@ -15,10 +15,16 @@ public class SubstringsFinderTest extends TestCase {
     private static final int RANDOM_STRINGS_LENGTH = 100000;
     private static final Random random = new Random();
 
+    private String returnFileFromResources(String name) {
+        ClassLoader classLoader = SubstringsFinderTest.class.getClassLoader();
+        return classLoader.getResource(name).getPath();
+    }
+
     @Test
     public void testSubstringFinder1() {
         try {
-            long[] answer = SubstringsFinder.findSubstringInFile("Test1.txt", "","пирог");
+            File testFile = new File(returnFileFromResources("Test1.txt"));
+            long[] answer = SubstringsFinder.findSubstringInFile(testFile,"пирог");
             long[] correctAnswer = new long[]{7};
 
             Assert.assertArrayEquals(correctAnswer, answer);
@@ -30,7 +36,8 @@ public class SubstringsFinderTest extends TestCase {
     @Test
     public void testSubstringFinder2() {
         try {
-            long[] answer = SubstringsFinder.findSubstringInFile("Test2.txt", "","пирог");
+            File testFile = new File(returnFileFromResources("Test2.txt"));
+            long[] answer = SubstringsFinder.findSubstringInFile(testFile, "пирог");
             long[] correctAnswer = new long[]{};
 
             Assert.assertArrayEquals(correctAnswer, answer);
@@ -42,7 +49,8 @@ public class SubstringsFinderTest extends TestCase {
     @Test
     public void testSubstringFinder3() {
         try {
-            long[] answer = SubstringsFinder.findSubstringInFile("Test3.txt", "", "findfi");
+            File testFile = new File(returnFileFromResources("Test3.txt"));
+            long[] answer = SubstringsFinder.findSubstringInFile(testFile, "findfi");
             long[] correctAnswer = new long[]{1, 5, 25};
 
             Assert.assertArrayEquals(correctAnswer, answer);
@@ -54,7 +62,8 @@ public class SubstringsFinderTest extends TestCase {
     @Test
     public void testSubstringFinder4() {
         try {
-            long[] answer = SubstringsFinder.findSubstringInFile("Test4.txt", "", "Pet");
+            File testFile = new File(returnFileFromResources("Test4.txt"));
+            long[] answer = SubstringsFinder.findSubstringInFile(testFile, "Pet");
             long[] correctAnswer = new long[]{576, 588, 598, 607, 637, 652, 665, 677, 687, 719, 731, 753, 770, 780, 826, 842, 857, 912};
 
             Assert.assertArrayEquals(correctAnswer, answer);
@@ -74,7 +83,8 @@ public class SubstringsFinderTest extends TestCase {
         }
 
         try {
-            long[] answer = SubstringsFinder.findSubstringInFile("","file10gb.txt", "StringToFind");
+            File testFile = new File("file10gb.txt");
+            long[] answer = SubstringsFinder.findSubstringInFile(testFile, "StringToFind");
             System.out.println(answer.length);
         } catch (IOException var3) {
             var3.printStackTrace();
@@ -94,7 +104,7 @@ public class SubstringsFinderTest extends TestCase {
         }
     }
 
-    private static String getRandowStringOfLengthN(int n) {
+    private static String getRandowStringOfLengthN(int length) {
 
         int number = random.nextInt(100);
         if (number > 95) {
@@ -105,9 +115,9 @@ public class SubstringsFinderTest extends TestCase {
                 + "0123456789"
                 + "abcdefghijklmnopqrstuvxyz";
 
-        StringBuilder sb = new StringBuilder(n);
+        StringBuilder sb = new StringBuilder(length);
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < length; i++) {
             int index = (int) (stringAlphabet.length() * Math.random());
             sb.append(stringAlphabet.charAt(index));
         }
