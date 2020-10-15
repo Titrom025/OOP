@@ -1,6 +1,5 @@
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 public class PriorityQueue<K extends Comparable<K>, V> implements Iterable<Pair<K, V>>{
 
@@ -77,11 +76,6 @@ public class PriorityQueue<K extends Comparable<K>, V> implements Iterable<Pair<
     @Override
     public Iterator<Pair<K, V>> iterator() {
         return new PriorityQueueIterator();
-    }
-
-    @Override
-    public void forEach(Consumer<? super Pair<K, V>> action) {
-
     }
 
     @Override
