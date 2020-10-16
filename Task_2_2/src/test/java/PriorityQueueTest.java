@@ -1,9 +1,18 @@
+import Task_2_2.PriorityQueue.*;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.StreamSupport;
 
+
 public class PriorityQueueTest {
+
+    private static final int MAX_RANDOM_COUNT = 100000;
+    private static final int MAX_RANDOM_KEY = 1000000;
+    private static final int MAX_RANDOM_VALUE = 1000000;
 
     @Test
     public void testPriorityQueue1() {
@@ -12,12 +21,16 @@ public class PriorityQueueTest {
         queue.insert(200, "собака");
         queue.insert(10, "человек");
 
-        System.out.println(queue.extract_max());
+        Pair<Integer, String> answer = queue.extract_max();
+        Assert.assertEquals(200, (long)answer.key);
+        Assert.assertEquals("собака", answer.value);
 
         queue.insert(5, "пингвин");
         queue.insert(500, "попугай");
 
-        System.out.println(queue.extract_max());
+        answer = queue.extract_max();
+        Assert.assertEquals(500, (long)answer.key);
+        Assert.assertEquals("попугай", answer.value);
     }
 
     @Test
@@ -33,6 +46,7 @@ public class PriorityQueueTest {
         for (Pair<Integer, String> pair : queue) {
             System.out.printf("Key: %d, value: %s\n", pair.key, pair.value);
         }
+
     }
 
     @Test
@@ -48,6 +62,27 @@ public class PriorityQueueTest {
         Object[] values = StreamSupport.stream(queue.spliterator(), false).map((a) -> a.value).toArray();
 
         System.out.println(Arrays.toString(values));
+    }
+
+    @Test
+    public void testPriorityQueue4() {
+        PriorityQueue<Integer, Integer> queue = new PriorityQueue<>();
+
+        Random random = new Random();
+
+        int elemensCount = random.nextInt(MAX_RANDOM_COUNT);
+
+        for (int i = 0; i < elemensCount; i++) {
+            int key = random.nextInt(MAX_RANDOM_KEY);
+            int value = random.nextInt(MAX_RANDOM_VALUE);
+            queue.insert(key, value);
+        }
+
+        int lastIndex = queue.extract_max().key;
+        for (int i = 0; i < elemensCount - 1; i++) {
+            Pair<Integer, Integer> elem = queue.extract_max();
+            Assert.assertTrue(lastIndex >= elem.key);
+        }
     }
 
 }

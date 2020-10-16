@@ -1,3 +1,5 @@
+package Task_2_2.PriorityQueue;
+
 import java.util.*;
 import java.util.function.*;
 
@@ -30,7 +32,8 @@ public class PriorityQueue<K extends Comparable<K>, V> implements Iterable<Pair<
 
         if (leftSon < size && queue[leftSon].key.compareTo(queue[largest].key) > 0) {
             largest = leftSon;
-        } else if (rightSon < size && queue[rightSon].key.compareTo(queue[largest].key) > 0) {
+        }
+        if (rightSon < size && queue[rightSon].key.compareTo(queue[largest].key) > 0) {
             largest = rightSon;
         }
 
@@ -60,13 +63,13 @@ public class PriorityQueue<K extends Comparable<K>, V> implements Iterable<Pair<
             queue = Arrays.copyOf(queue, queue.length * 2);
         }
 
-        queue[elementsCount] = element;
-        siftup(elementsCount++);
+        queue[elementsCount++] = element;
+        siftup(elementsCount - 1);
     }
 
-    public V extract_max() {
+    public Pair<K, V> extract_max() {
 
-        V maximum = queue[0].value;
+        Pair<K, V> maximum = queue[0];
         swap(0, --elementsCount);
         siftdown(0, elementsCount);
 
