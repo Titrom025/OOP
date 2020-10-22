@@ -77,19 +77,15 @@ public class PriorityQueue<K extends Comparable<K>, V> implements Iterable<Pair<
     }
 
     @Override
-    public Iterator<Pair<K, V>> iterator() {
-        return new PriorityQueueIterator();
-    }
-
-    @Override
     public Spliterator<Pair<K, V>> spliterator() {
-        return new PriorityQueueSpliterator<Pair<K, V>>(queue,0, elementsCount);
+        Pair<K, V>[] orderedQueue = new PriorityQueueIterator().iteratorQueue;
+        return new PriorityQueueSpliterator<>(orderedQueue, 0, elementsCount);
     }
 
     static class PriorityQueueSpliterator<T> implements Spliterator<T> {
         private final Object[] array;
-        private int maxPos; // current index, advanced on split or traversal
-        private int currentPos = 0;
+        private final int maxPos;
+        private int currentPos;
 
         PriorityQueueSpliterator(Object[] array, int currentPos, int maxPos) {
             this.array = array;
@@ -127,9 +123,26 @@ public class PriorityQueue<K extends Comparable<K>, V> implements Iterable<Pair<
         }
     }
 
+    @Override
+    public Iterator<Pair<K, V>> iterator() {
+        return new PriorityQueueIterator();
+    }
+
     class PriorityQueueIterator implements Iterator<Pair<K, V>> {
 
+        public Pair<K, V>[] iteratorQueue = new Pair[elementsCount];
         private int iteratorPosition = 0;
+
+        public PriorityQueueIterator() {
+            int count = elementsCount;
+            for (int i = 0; i < count; i++) {
+                iteratorQueue[i] = extract_max();
+            }
+
+            for (int i = 0; i < count; i++) {
+                insert(iteratorQueue[i].key, iteratorQueue[i].value);
+            }
+        }
 
         @Override
         public boolean hasNext() {
@@ -138,7 +151,7 @@ public class PriorityQueue<K extends Comparable<K>, V> implements Iterable<Pair<
 
         @Override
         public Pair<K, V> next() {
-            return queue[iteratorPosition++];
+            return iteratorQueue[iteratorPosition++];
         }
     }
 }

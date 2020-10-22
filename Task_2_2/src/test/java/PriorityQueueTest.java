@@ -4,14 +4,15 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
 
 public class PriorityQueueTest {
 
     private static final int MAX_RANDOM_COUNT = 100000;
-    private static final int MAX_RANDOM_KEY = 1000000;
+    private static final int MAX_RANDOM_KEY = 10000;
     private static final int MAX_RANDOM_VALUE = 1000000;
 
     @Test
@@ -44,9 +45,16 @@ public class PriorityQueueTest {
         queue.insert(500, "попугай");
 
         for (Pair<Integer, String> pair : queue) {
-            System.out.printf("Key: %d, value: %s\n", pair.key, pair.value);
+            Pair<Integer, String> max = queue.extract_max();
+            Assert.assertEquals(pair.key, max.key);
+            Assert.assertEquals(pair.value, max.value);
         }
 
+        for (Pair<Integer, String> pair : queue) {
+            Pair<Integer, String> max = queue.extract_max();
+            Assert.assertEquals(pair.key, max.key);
+            Assert.assertEquals(pair.value, max.value);
+        }
     }
 
     @Test
@@ -82,6 +90,30 @@ public class PriorityQueueTest {
         for (int i = 0; i < elemensCount - 1; i++) {
             Pair<Integer, Integer> elem = queue.extract_max();
             Assert.assertTrue(lastIndex >= elem.key);
+        }
+    }
+
+    @Test
+    public void testPriorityQueue5() {
+        PriorityQueue<Integer, Integer> queue = new PriorityQueue<>();
+
+        Random random = new Random();
+
+        int elemensCount = random.nextInt(MAX_RANDOM_COUNT);
+
+        for (int i = 0; i < elemensCount; i++) {
+            int key = random.nextInt(MAX_RANDOM_KEY);
+            int value = random.nextInt(MAX_RANDOM_VALUE);
+            queue.insert(key, value);
+        }
+
+        List<Pair<Integer, Integer>> filetered =
+                StreamSupport.stream(queue.spliterator(), false)
+                .filter(a -> a.key > 10 && a.key < 100)
+                .collect(Collectors.toList());
+
+        for (Pair<Integer, Integer> pair : filetered) {
+            Assert.assertTrue(pair.key > 10 && pair.key < 100);
         }
     }
 
