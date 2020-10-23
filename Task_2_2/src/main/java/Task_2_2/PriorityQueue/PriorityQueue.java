@@ -78,7 +78,8 @@ public class PriorityQueue<K extends Comparable<K>, V> implements Iterable<Pair<
 
     @Override
     public Spliterator<Pair<K, V>> spliterator() {
-        Pair<K, V>[] orderedQueue = new PriorityQueueIterator().iteratorQueue;
+        Pair<K, V>[] orderedQueue = new PriorityQueueIterator().iteratorQueue.clone();
+
         return new PriorityQueueSpliterator<>(orderedQueue, 0, elementsCount);
     }
 
@@ -128,25 +129,28 @@ public class PriorityQueue<K extends Comparable<K>, V> implements Iterable<Pair<
         return new PriorityQueueIterator();
     }
 
+    class SortbyDescending implements Comparator<Pair<K, V>>
+    {
+        public int compare(Pair<K, V> a, Pair<K, V> b)
+        {
+            return -a.key.compareTo(b.key);
+        }
+    }
+
     class PriorityQueueIterator implements Iterator<Pair<K, V>> {
 
-        public Pair<K, V>[] iteratorQueue = new Pair[elementsCount];
+        public Pair<K, V>[] iteratorQueue;
         private int iteratorPosition = 0;
+        private int maxpos = elementsCount;
 
         public PriorityQueueIterator() {
-            int count = elementsCount;
-            for (int i = 0; i < count; i++) {
-                iteratorQueue[i] = extract_max();
-            }
-
-            for (int i = 0; i < count; i++) {
-                insert(iteratorQueue[i].key, iteratorQueue[i].value);
-            }
+            iteratorQueue = Arrays.copyOf(queue, maxpos);
+            Arrays.sort(iteratorQueue, new SortbyDescending());
         }
 
         @Override
         public boolean hasNext() {
-            return !(iteratorPosition == elementsCount);
+            return !(iteratorPosition == maxpos);
         }
 
         @Override

@@ -49,12 +49,6 @@ public class PriorityQueueTest {
             Assert.assertEquals(pair.key, max.key);
             Assert.assertEquals(pair.value, max.value);
         }
-
-        for (Pair<Integer, String> pair : queue) {
-            Pair<Integer, String> max = queue.extract_max();
-            Assert.assertEquals(pair.key, max.key);
-            Assert.assertEquals(pair.value, max.value);
-        }
     }
 
     @Test
