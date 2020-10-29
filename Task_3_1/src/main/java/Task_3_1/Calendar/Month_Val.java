@@ -1,5 +1,8 @@
 package Task_3_1.Calendar;
 
+/**
+ * enum of the months
+ */
 public enum Month_Val {
     JANUARY,
     FEBRUARY,

@@ -1,5 +1,8 @@
 package Task_3_1.Calendar;
 
+/**
+ * Class Year contains id of year "year" and methods for working with years
+ */
 public class Year {
     private int year;
 
@@ -19,6 +22,10 @@ public class Year {
         this.year++;
     }
 
+    /**
+     * The method checks if the current year is intercalary
+     * @return true, if the year is intercalary
+     */
     public boolean isYearIntercalary() {
         if (year % 400 == 0) {
             return true;
