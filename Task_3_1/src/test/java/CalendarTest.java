@@ -9,7 +9,7 @@ public class CalendarTest extends TestCase{
     @Test
     public void testCalendar1() {
         Calendar currentDate = new Calendar(28, 10, 2020);
-        Assert.assertEquals(Day_Val.FRIDAY, currentDate.getWeekdayAfterDays(1024));
+        Assert.assertEquals(Weekdays.FRIDAY, currentDate.getWeekdayAfterDays(1024));
     }
 
     @Test
@@ -27,13 +27,13 @@ public class CalendarTest extends TestCase{
     @Test
     public void testCalendar3() {
         Calendar birthday = new Calendar(15, 2, 2001);
-        Assert.assertEquals(Day_Val.THURSDAY, birthday.getDayOfWeek());
+        Assert.assertEquals(Weekdays.THURSDAY, birthday.getDayOfWeek());
     }
 
     @Test
     public void testCalendar4() {
         Calendar currentDate = new Calendar(28, 10, 2020);
-        Assert.assertEquals(Month_Val.FEBRUARY, currentDate.getMonthAfterWeeks(14));
+        Assert.assertEquals(Months.FEBRUARY, currentDate.getMonthAfterWeeks(14));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class CalendarTest extends TestCase{
         Calendar currentDate = new Calendar(28, 10, 2020);
 
         Calendar answer = new Calendar(13, 11, 2020);
-        Calendar foundedAnswer = currentDate.findNextDateWithDayAndWeekday(13, Day_Val.FRIDAY);
+        Calendar foundedAnswer = currentDate.findNextDateWithDayAndWeekday(13, Weekdays.FRIDAY);
 
         Assert.assertEquals(answer, foundedAnswer);
     }

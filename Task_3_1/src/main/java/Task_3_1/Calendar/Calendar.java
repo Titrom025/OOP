@@ -1,6 +1,8 @@
 package Task_3_1.Calendar;
 
-public class Calendar {
+import java.util.Objects;
+
+public class Calendar implements Comparable<Calendar>{
     private static final int DAYS_IN_THE_WEEK = 7;
     private static final int DAYS_IN_THE_COMMON_YEAR = 365;
     private static final int DAYS_IN_THE_INTERCALARY_YEAR = 366;
@@ -39,17 +41,6 @@ public class Calendar {
         }
     }
 
-    /**
-     * The addition initialization of Calendar (by zero value),
-     * which is used in inner realization of the class to support counter
-     *
-     */
-    private Calendar() {
-        this.day = 0;
-        this.month = new Month(0);
-        this.year = new Year(0);
-    }
-
     public int getDateDay() {
         return day;
     }
@@ -60,19 +51,6 @@ public class Calendar {
 
     public int getDateYear() {
         return year.getYear();
-    }
-
-    private void nextMonth() {
-        this.day = 1;
-        if (month.nextMonth()) {
-            this.nextYear();
-        }
-    }
-
-    private void nextYear() {
-        this.day = 1;
-        this.month.setMonth(1);
-        year.nextYear();
     }
 
     public int getDaysInMonth() {
@@ -105,7 +83,7 @@ public class Calendar {
      * The function gets the day of the week of current date
      * @return the value of type enum Day_Val
      */
-    public Day_Val getDayOfWeek() {
+    public Weekdays getDayOfWeek() {
         int dayNumber = 0;
         Calendar startDate = new Calendar(MINIMUM_DAY_IN_DATE, MINIMUM_MONTH_IN_DATE, MINIMUM_YEAR_IN_DATE);
 
@@ -121,7 +99,7 @@ public class Calendar {
 
         dayNumber += this.day;
 
-        return Day_Val.values()[dayNumber % 7];
+        return Weekdays.values()[dayNumber % 7];
     }
 
     /**
@@ -131,7 +109,7 @@ public class Calendar {
      * @return new Calendar, which is the difference of the two dates
      */
     public Calendar getDateDifference(Calendar date) {
-        if (cmp(this, date) > 0) {
+        if (this.compareTo(date) > 0) {
             return this.getTimeElapsedFromDate(date);
         } else {
             return date.getTimeElapsedFromDate(this);
@@ -170,7 +148,7 @@ public class Calendar {
      * @param daysToSkip - days to skip in the current date
      * @return day of the week of type enum Day_Val
      */
-    public Day_Val getWeekdayAfterDays(int daysToSkip) {
+    public Weekdays getWeekdayAfterDays(int daysToSkip) {
         Calendar date = getDateAfterDays(daysToSkip);
         return date.getDayOfWeek();
     }
@@ -180,11 +158,11 @@ public class Calendar {
      * @param weeksToSkip - weeks to skip in the current date
      * @return month  of type enum Month_Val
      */
-    public Month_Val getMonthAfterWeeks(int weeksToSkip) {
+    public Months getMonthAfterWeeks(int weeksToSkip) {
         int daysToSkip = weeksToSkip * DAYS_IN_THE_WEEK;
         Calendar date = getDateAfterDays(daysToSkip);
 
-        return Month_Val.values()[date.month.getMonth() - 1];
+        return Months.values()[date.month.getMonth() - 1];
     }
 
     /**
@@ -193,7 +171,7 @@ public class Calendar {
      * @param weekday - the weekday of the required date
      * @return new date where day of the date = parameter "day" and weekday of the date = parameter "weekday"
      */
-    public Calendar findNextDateWithDayAndWeekday(int day, Day_Val weekday) {
+    public Calendar findNextDateWithDayAndWeekday(int day, Weekdays weekday) {
         if (day > MAXIMUM_DAY_IN_DATE || day < MINIMUM_DAY_IN_DATE) {
             throw new IllegalArgumentException("Unexpected value: " + day + " - invalid day of month");
         }
@@ -207,7 +185,7 @@ public class Calendar {
             }
         }
 
-        Day_Val currentWeekday = date.getDayOfWeek();
+        Weekdays currentWeekday = date.getDayOfWeek();
         while (currentWeekday != weekday) {
             date.nextMonth();
             date.day = day;
@@ -266,28 +244,58 @@ public class Calendar {
                 year.getYear() == calendar.year.getYear();
     }
 
-    public int cmp(Calendar date1, Calendar date2) {
-        if (date1 == date2) {
+    @Override
+    public int hashCode() {
+        return Objects.hash(day, month, year);
+    }
+
+    @Override
+    public int compareTo(Calendar date) {
+        if (this == date) {
             return 0;
         }
 
-        if (date1.year.getYear() < date2.year.getYear()) {
+        if (this.year.getYear() < date.year.getYear()) {
             return -1;
-        } else if (date1.year.getYear() > date2.year.getYear()) {
+        } else if (this.year.getYear() > date.year.getYear()) {
             return 1;
         } else {
-            if (date1.month.getMonth() < date2.month.getMonth()) {
+            if (this.month.getMonth() < date.month.getMonth()) {
                 return -1;
-            } else if (date1.month.getMonth() > date2.month.getMonth()) {
+            } else if (this.month.getMonth() > date.month.getMonth()) {
                 return 1;
             } else {
-                if (date1.day < date2.day) {
+                if (this.day < date.day) {
                     return -1;
                 } else {
                     return 1;
                 }
             }
         }
+    }
+
+    /**
+     * The addition initialization of Calendar (by zero value),
+     * which is used in inner realization of the class to support counter
+     *
+     */
+    private Calendar() {
+        this.day = 0;
+        this.month = new Month(0);
+        this.year = new Year(0);
+    }
+
+    private void nextMonth() {
+        this.day = 1;
+        if (month.nextMonth()) {
+            this.nextYear();
+        }
+    }
+
+    private void nextYear() {
+        this.day = 1;
+        this.month.setMonth(1);
+        year.nextYear();
     }
 }
 
