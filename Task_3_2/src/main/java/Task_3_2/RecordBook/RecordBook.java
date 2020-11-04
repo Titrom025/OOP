@@ -12,12 +12,22 @@ public class RecordBook {
     private int currentSemesterInput = 0;
     private int finalWorkGrade = -1;
 
+    /**
+     * Class RecordBook initializer
+     * @param yearsOfStudy - number of years/courses of student
+     * @param numberOfSemestersWithGrades - number of semesters, which have all grades
+     */
     public RecordBook(int yearsOfStudy, int numberOfSemestersWithGrades) {
         this.yearsOfStudy = yearsOfStudy;
         this.numberOfSemestersWithGrades = numberOfSemestersWithGrades;
         this.semesters = new Semester[yearsOfStudy * NUMBER_OF_SEMESTERS_IN_YEAR];
     }
 
+    /**
+     * The function adds grades to semester if it's number less then the number of semesters,
+     * which contain all grades
+     * @param grades - grades for semester
+     */
     public void addSemesterGrades(int[] grades) {
         if (currentSemesterInput < numberOfSemestersWithGrades) {
             semesters[currentSemesterInput++] = new Semester(grades);
@@ -26,20 +36,32 @@ public class RecordBook {
         }
     }
 
-    public void addSemesterGrades(int numberOfgrades) {
+    /**
+     * The function sets count of grades to semester, which doesn't have grades yet
+     * @param numberOfGrades - number of grades in semester
+     */
+    public void addSemesterGrades(int numberOfGrades) {
         if (currentSemesterInput < numberOfSemestersWithGrades) {
             throw new IllegalStateException("Unexpected state: " + "Not all semesters with grades are full");
         } else if (currentSemesterInput < yearsOfStudy * NUMBER_OF_SEMESTERS_IN_YEAR) {
-            semesters[currentSemesterInput++] = new Semester(numberOfgrades);
+            semesters[currentSemesterInput++] = new Semester(numberOfGrades);
         } else {
             throw new IllegalStateException("Unexpected state: " + "All semesters are already full");
         }
     }
 
+    /**
+     * The function sets the grade for final study work
+     * @param grade - grade for final study work
+     */
     public void setFinalWorkGrade(int grade) {
         finalWorkGrade = grade;
     }
 
+    /**
+     * The function calculates the average grade of semesters, which have all grades
+     * @return - an average of semesters with grades
+     */
     public double getAverageGrade() {
         if (currentSemesterInput < numberOfSemestersWithGrades) {
             throw new IllegalStateException("Unexpected state: " + "Not all semesters with grades are full");
@@ -59,17 +81,29 @@ public class RecordBook {
         }
     }
 
+    /**
+     * The function checks the ability to get honors degree
+     * @return true, if it is possible to get honors degree
+     */
     public boolean isAbleToGetHonorsDegree() {
         return (finalWorkGrade == 5 || finalWorkGrade == -1) && hasOnlyGoodGrades()
                 && potentialExcellentGradesPercent() >= 0.75;
     }
 
+    /**
+     * The function checks the last known semester with grades for average grade 5.0
+     * @return true, if it is possible to receive increased stipend
+     */
     public boolean isAbleToGetIncreasedStipend() {
         return  currentSemesterInput >= numberOfSemestersWithGrades &&
                 numberOfSemestersWithGrades < yearsOfStudy * NUMBER_OF_SEMESTERS_IN_YEAR &&
                 semesters[numberOfSemestersWithGrades - 1].getAverageGrade() == 5.0;
     }
 
+    /**
+     * The function checks, if the student has grades less than 4
+     * @return true, if the student has only good grades
+     */
     private boolean hasOnlyGoodGrades() {
         int semestersCount = yearsOfStudy * NUMBER_OF_SEMESTERS_IN_YEAR;
 
@@ -78,10 +112,12 @@ public class RecordBook {
                 return false;
             }
         }
-
         return true;
     }
 
+    /**
+     * @return (a maximum possible percent of excellent grades)/100
+     */
     private double potentialExcellentGradesPercent() {
         int semestersCount = yearsOfStudy * NUMBER_OF_SEMESTERS_IN_YEAR;
 
