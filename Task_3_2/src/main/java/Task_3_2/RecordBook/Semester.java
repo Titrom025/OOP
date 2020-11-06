@@ -19,8 +19,10 @@ public class Semester {
      * @return count of excellent grades
      */
     public int getExcellentFinalGradesCount() {
-        if (grades.length == 0 || !isFilled) {
+        if (grades.length == 0) {
             return 0;
+        } else if (!isFilled){
+            return numberOfGrades;
         }
 
         int gradesCount = 0;
@@ -53,8 +55,10 @@ public class Semester {
      * @return the sum of the final grades in this semester
      */
     public int getFinalGradesCount() {
-        if (grades.length == 0 || !isFilled) {
+        if (grades.length == 0) {
             return 0;
+        } else if (!isFilled){
+            return numberOfGrades;
         }
 
         int gradesCount = 0;

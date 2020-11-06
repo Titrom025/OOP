@@ -49,7 +49,7 @@ public class RecordBookTest extends TestCase {
     @Test
     public void testRecordBook3() {
         RecordBook recordBook = new RecordBook();
-        Assert.assertFalse(recordBook.isAbleToGetHonorsDegree());
+        Assert.assertTrue(recordBook.isAbleToGetHonorsDegree());
         recordBook.setFinalWorkGrade(4);
         Assert.assertFalse(recordBook.isAbleToGetHonorsDegree());
     }
@@ -70,7 +70,7 @@ public class RecordBookTest extends TestCase {
         recordBook.setFinalWorkGrade(4);
         Assert.assertFalse(recordBook.isAbleToGetHonorsDegree());
         recordBook.setFinalWorkGrade(5);
-        
+
         double averageGrade = recordBook.getAverageGrade();
         Assert.assertTrue(averageGrade >= 4.88 && averageGrade <= 4.89);
         Assert.assertTrue(recordBook.isAbleToGetHonorsDegree());
