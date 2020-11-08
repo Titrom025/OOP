@@ -10,8 +10,10 @@ public class RecordBookTest extends TestCase {
     public void testRecordBook1() {
         RecordBook recordBook = new RecordBook();
 
-        recordBook.addSemesterGrades(1, new int[]{5,5,5,5,5,4,5,5});
-        recordBook.addSemesterGrades(2, new int[]{5,5,5,5,5,5});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE, Grade.FIVE, Grade.FIVE, Grade.FIVE,
+                                                 Grade.FIVE, Grade.FOUR, Grade.FIVE, Grade.FIVE});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE, Grade.FIVE, Grade.FIVE,
+                                                 Grade.FIVE,Grade.FIVE,Grade.FIVE});
 
         double averageGrade = recordBook.getAverageGrade();
         Assert.assertTrue(averageGrade >= 4.92 && averageGrade <= 4.93);
@@ -23,21 +25,21 @@ public class RecordBookTest extends TestCase {
     public void testRecordBook2() {
         Semester[] semesters = new Semester[]{
                 new Semester( new Subject[] {
-                        new Subject("Введение в алгебру и анализ", 0, true),
-                        new Subject("Введение в дискретную математику и математическую логику", 0, true),
-                        new Subject("Декларативное программирование", 0, true),
-                        new Subject("Императивное программирование", 0, false)},
+                        new Subject("Введение в алгебру и анализ", Grade.UNDEFINED, true),
+                        new Subject("Введение в дискретную математику и математическую логику", Grade.UNDEFINED, true),
+                        new Subject("Декларативное программирование", Grade.UNDEFINED, true),
+                        new Subject("Императивное программирование", Grade.UNDEFINED, false)},
                         false),
                 new Semester( new Subject[] {
-                        new Subject("Императивное программирование", 0, true),
-                        new Subject("Иностранный язык", 0, true),
-                        new Subject("Цифровые платформы", 0, true)},
+                        new Subject("Императивное программирование", Grade.UNDEFINED, true),
+                        new Subject("Иностранный язык", Grade.UNDEFINED, true),
+                        new Subject("Цифровые платформы", Grade.UNDEFINED, true)},
                         false)};
 
         RecordBook recordBook = new RecordBook(semesters);
 
-        recordBook.addSemesterGrades(1, new int[]{5,4,5,5});
-        recordBook.addSemesterGrades(2, new int[]{5,4,5});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE,Grade.FOUR,Grade.FIVE,Grade.FIVE});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE,Grade.FOUR,Grade.FIVE});
 
         double averageGrade = recordBook.getAverageGrade();
 
@@ -50,7 +52,7 @@ public class RecordBookTest extends TestCase {
     public void testRecordBook3() {
         RecordBook recordBook = new RecordBook();
         Assert.assertTrue(recordBook.isAbleToGetHonorsDegree());
-        recordBook.setFinalWorkGrade(4);
+        recordBook.setFinalWorkGrade(Grade.FOUR);
         Assert.assertFalse(recordBook.isAbleToGetHonorsDegree());
     }
 
@@ -58,18 +60,26 @@ public class RecordBookTest extends TestCase {
     public void testRecordBook4() {
         RecordBook recordBook = new RecordBook();
 
-        recordBook.addSemesterGrades(1, new int[]{5,5,5,5,5,4,5,5});
-        recordBook.addSemesterGrades(2, new int[]{5,5,5,5,5,5});
-        recordBook.addSemesterGrades(3, new int[]{5,5,5,5,5,4,5,5});
-        recordBook.addSemesterGrades(4, new int[]{5,5,5,5,5,5,5,5,5});
-        recordBook.addSemesterGrades(5, new int[]{5,5,5,5,5,5,4,5,5});
-        recordBook.addSemesterGrades(6, new int[]{5,5,5,5,4,4,4,5,5});
-        recordBook.addSemesterGrades(7, new int[]{5,5,5,5,5,4,5});
-        recordBook.addSemesterGrades(8, new int[]{5,5,5,5,5,5,5});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE,Grade.FIVE,Grade.FIVE,Grade.FIVE,
+                                                 Grade.FIVE,Grade.FOUR,Grade.FIVE,Grade.FIVE});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE,Grade.FIVE,Grade.FIVE,
+                                                 Grade.FIVE,Grade.FIVE,Grade.FIVE});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE,Grade.FIVE,Grade.FIVE,Grade.FIVE,
+                                                 Grade.FIVE,Grade.FOUR,Grade.FIVE,Grade.FIVE});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE,Grade.FIVE,Grade.FIVE,Grade.FIVE,
+                                                 Grade.FIVE,Grade.FIVE,Grade.FIVE,Grade.FIVE,Grade.FIVE});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE,Grade.FIVE,Grade.FIVE,Grade.FIVE,
+                                                 Grade.FIVE,Grade.FIVE,Grade.FOUR,Grade.FIVE,Grade.FIVE});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE,Grade.FIVE,Grade.FIVE,Grade.FIVE,
+                                                 Grade.FOUR,Grade.FOUR,Grade.FOUR,Grade.FIVE,Grade.FIVE});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE,Grade.FIVE,Grade.FIVE,Grade.FIVE,
+                                                 Grade.FIVE,Grade.FOUR,Grade.FIVE});
+        recordBook.addSemesterGrades(new Grade[]{Grade.FIVE,Grade.FIVE,Grade.FIVE,Grade.FIVE,
+                                                 Grade.FIVE,Grade.FIVE,Grade.FIVE});
 
-        recordBook.setFinalWorkGrade(4);
+        recordBook.setFinalWorkGrade(Grade.FOUR);
         Assert.assertFalse(recordBook.isAbleToGetHonorsDegree());
-        recordBook.setFinalWorkGrade(5);
+        recordBook.setFinalWorkGrade(Grade.FIVE);
 
         double averageGrade = recordBook.getAverageGrade();
         Assert.assertTrue(averageGrade >= 4.88 && averageGrade <= 4.89);

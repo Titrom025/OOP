@@ -15,6 +15,12 @@ public class Semester {
         this.isFilled = isFilled;
     }
 
+    public int getNumberOfGrades() {
+        if (grades.length == 0 || !isFilled) {
+            return 0;
+        }
+        return numberOfGrades;
+    }
     /**
      * @return count of excellent grades
      */
@@ -27,7 +33,7 @@ public class Semester {
 
         int gradesCount = 0;
         for (int i = 0; i < numberOfGrades; i++) {
-            if (grades[i].isFinalGrade && grades[i].grade == 5) {
+            if (grades[i].isFinalGrade && grades[i].grade.ordinal() == 5) {
                 gradesCount++;
             }
         }
@@ -44,7 +50,7 @@ public class Semester {
 
         int gradesCount = 0;
         for (int i = 0; i < numberOfGrades; i++) {
-            if (grades[i].isFinalGrade && grades[i].grade <= 3) {
+            if (grades[i].isFinalGrade && grades[i].grade.ordinal() <= 3) {
                 gradesCount++;
             }
         }
@@ -73,19 +79,19 @@ public class Semester {
     /**
      * @return sum of grades in current semester
      */
-    public double getGradesSum() {
+    public int getGradesSum() {
         if (grades.length == 0 || !isFilled) {
             return 0;
         }
 
         int gradesSum = 0;
         for (int i = 0; i < numberOfGrades; i++) {
-            gradesSum += grades[i].grade;
+            gradesSum += grades[i].grade.ordinal();
         }
         return gradesSum;
     }
 
-    public void setGrades(int[] grades) {
+    public void setGrades(Grade[] grades) {
         for (int i = 0; i < numberOfGrades; i++) {
             this.grades[i].grade = grades[i];
         }

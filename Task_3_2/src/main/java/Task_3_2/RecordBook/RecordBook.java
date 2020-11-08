@@ -1,9 +1,12 @@
 package Task_3_2.RecordBook;
 
+import java.util.Arrays;
+
 public class RecordBook {
     private final Semester[] semesters;
     private final int semestersCount;
-    private int finalWorkGrade = -1;
+    private Grade finalWorkGrade = Grade.UNDEFINED;
+    private int currentSemester = 0;
 
     /**
      * Standart initializer of NSU FIT student's record book
@@ -27,9 +30,10 @@ public class RecordBook {
      * which contain all grades
      * @param grades - grades for semester
      */
-    public void addSemesterGrades(int semesterNumber, int[] grades) {
-        if (semesters[semesterNumber - 1].numberOfGrades == grades.length) {
-            semesters[semesterNumber - 1].setGrades(grades);
+    public void addSemesterGrades(Grade[] grades) {
+        if (semesters[currentSemester].numberOfGrades == grades.length) {
+            semesters[currentSemester++].setGrades(grades);
+
         } else {
             throw new IllegalArgumentException("Unexpected grades array: length is incorrect");
         }
@@ -39,7 +43,7 @@ public class RecordBook {
      * The function sets the grade for final study work
      * @param grade - grade for final study work
      */
-    public void setFinalWorkGrade(int grade) {
+    public void setFinalWorkGrade(Grade grade) {
         finalWorkGrade = grade;
     }
 
@@ -48,14 +52,8 @@ public class RecordBook {
      * @return - an average of semesters with grades
      */
     public double getAverageGrade() {
-        double gradesSum = 0;
-        int gradesCount = 0;
-        for (int i = 0; i < semestersCount; i++) {
-            if (semesters[i].isFilled) {
-                gradesSum += semesters[i].getGradesSum();
-                gradesCount += semesters[i].numberOfGrades;
-            }
-        }
+        double gradesSum = Arrays.stream(semesters).map(Semester::getGradesSum).mapToInt(Integer::intValue).sum();
+        int gradesCount = Arrays.stream(semesters).map(Semester::getNumberOfGrades).mapToInt(Integer::intValue).sum();
 
         return gradesSum / gradesCount;
     }
@@ -65,7 +63,7 @@ public class RecordBook {
      * @return true, if it is possible to get honors degree
      */
     public boolean isAbleToGetHonorsDegree() {
-        return (finalWorkGrade == 5 || finalWorkGrade == -1) && hasOnlyGoodFinalGrades()
+        return (finalWorkGrade.ordinal() == 5 || finalWorkGrade.ordinal() == 0) && hasOnlyGoodFinalGrades()
                 && potentialExcellentGradesPercent() >= 0.75;
     }
 
@@ -74,16 +72,8 @@ public class RecordBook {
      * @return true, if it is possible to receive increased stipend (if all semesters were passed, false returns)
      */
     public boolean isAbleToGetIncreasedStipend() {
-        int lastSemester = -1;
-        for (int i = 0; i < semestersCount; i++) {
-            if (semesters[i].isFilled) {
-                lastSemester = i;
-            } else {
-                break;
-            }
-        }
-        return  lastSemester >= 0 && lastSemester < semestersCount - 1 &&
-                (semesters[lastSemester].getGradesSum() / semesters[lastSemester].numberOfGrades) == 5.0;
+        return  currentSemester >= 0 && currentSemester < semestersCount - 1 &&
+                ((double) semesters[currentSemester - 1].getGradesSum() / semesters[currentSemester - 1].getNumberOfGrades()) == 5.0;
     }
 
     /**
@@ -91,25 +81,15 @@ public class RecordBook {
      * @return true, if the student has only good grades
      */
     private boolean hasOnlyGoodFinalGrades() {
-        for (int i = 0; i < semestersCount; i++) {
-            if (semesters[i].getBadFinalGradesCount() > 0) {
-                return false;
-            }
-        }
-        return true;
+        return Arrays.stream(semesters).map(x -> x.getBadFinalGradesCount() > 0 ? 1 : 0).mapToInt(Integer::intValue).sum() == 0;
     }
 
     /**
      * @return (a maximum possible percent of excellent grades)/100
      */
     private double potentialExcellentGradesPercent() {
-        int excellentGradesCount = 0;
-        int totalGradesCount = 0;
-
-        for (int i = 0; i < semestersCount; i++) {
-            excellentGradesCount += semesters[i].getExcellentFinalGradesCount();
-            totalGradesCount += semesters[i].getFinalGradesCount();
-        }
+        int excellentGradesCount = Arrays.stream(semesters).map(Semester::getExcellentFinalGradesCount).mapToInt(Integer::intValue).sum();
+        int totalGradesCount = Arrays.stream(semesters).map(Semester::getFinalGradesCount).mapToInt(Integer::intValue).sum();
 
         return (double) excellentGradesCount / totalGradesCount;
     }
