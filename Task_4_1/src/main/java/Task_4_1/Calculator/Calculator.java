@@ -2,52 +2,42 @@ package Task_4_1.Calculator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * Calculator class supports operations {"+", "-", "*", "/", "pow", "sqrt", "log", "sin", "cos"} for real numbers,
  * working with degrees, but complex numbers supports only simple operations. Moreover complex numbers must be written in
  * strictly defined form "(a+ib)" or "(c-id)"
+ * To stop programm enter "stop"
  */
 public class Calculator {
     private static final String[] BINARY_OPS = new String[] {"+", "-", "*", "/", "pow"};
     private static final String[] UNARY_OPS = new String[] {"sqrt", "log", "sin", "cos"};
 
-    private void makeBinaryOperation(String op, ArrayList<Token> tokens, int element) {
-        tokens.remove(element);
-
-        Token firstAtom = tokens.remove(element);
-        Token secondAtom = tokens.remove(element);
-
-        Token newAtom;
-
-        switch (op) {
-            case "+" -> newAtom = Token.add(firstAtom, secondAtom);
-            case "-" -> newAtom = Token.substract(firstAtom, secondAtom);
-            case "*" -> newAtom = Token.multiply(firstAtom, secondAtom);
-            case "/" -> newAtom = Token.divide(firstAtom, secondAtom);
-            case "pow" -> newAtom = Token.pow(firstAtom, secondAtom);
-            default -> throw new IllegalArgumentException("Illegal operation");
-        }
-
-        tokens.add(element, newAtom);
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        calc.startCalculation();
     }
-
-    private void makeUnaryOperation(String op, ArrayList<Token> tokens, int element) {
-        tokens.remove(element);
-
-        Token atom = tokens.remove(element);
-
-        Token newAtom;
-
-        switch (op) {
-            case "sqrt" -> newAtom = Token.sqrt(atom);
-            case "log" -> newAtom = Token.log(atom);
-            case "sin" -> newAtom = Token.sin(atom);
-            case "cos" -> newAtom = Token.cos(atom);
-            default ->  throw new IllegalArgumentException("Illegal operation");
+    
+    /**
+     * Main cycle of console program
+     */
+    public void startCalculation() {
+        Scanner scan= new Scanner(System.in);
+        String input = "";
+        System.out.print("Enter expression in prefix form: ");
+        while (!(input = scan.nextLine()).equals("stop")) {
+            Token answer = calculate(input);
+            System.out.printf("%f ", answer.real);
+            if (answer.imaginary != 0) {
+                if (answer.imaginary > 0) {
+                    System.out.printf("+ %fi", answer.imaginary);
+                } else {
+                    System.out.printf("%fi", answer.imaginary);
+                }
+            }
+            System.out.print("\nEnter expression in prefix form: ");
         }
-
-        tokens.add(element, newAtom);
     }
 
     /**
@@ -135,6 +125,44 @@ public class Calculator {
         return tokens.get(0);
     }
 
+    private void makeBinaryOperation(String op, ArrayList<Token> tokens, int element) {
+        tokens.remove(element);
+
+        Token firstAtom = tokens.remove(element);
+        Token secondAtom = tokens.remove(element);
+
+        Token newAtom;
+
+        switch (op) {
+            case "+" -> newAtom = Token.add(firstAtom, secondAtom);
+            case "-" -> newAtom = Token.substract(firstAtom, secondAtom);
+            case "*" -> newAtom = Token.multiply(firstAtom, secondAtom);
+            case "/" -> newAtom = Token.divide(firstAtom, secondAtom);
+            case "pow" -> newAtom = Token.pow(firstAtom, secondAtom);
+            default -> throw new IllegalArgumentException("Illegal operation");
+        }
+
+        tokens.add(element, newAtom);
+    }
+
+    private void makeUnaryOperation(String op, ArrayList<Token> tokens, int element) {
+        tokens.remove(element);
+
+        Token atom = tokens.remove(element);
+
+        Token newAtom;
+
+        switch (op) {
+            case "sqrt" -> newAtom = Token.sqrt(atom);
+            case "log" -> newAtom = Token.log(atom);
+            case "sin" -> newAtom = Token.sin(atom);
+            case "cos" -> newAtom = Token.cos(atom);
+            default ->  throw new IllegalArgumentException("Illegal operation");
+        }
+
+        tokens.add(element, newAtom);
+    }
+
     private static boolean isNumeric(String strNum) {
         if (strNum == null) {
             return false;
@@ -147,3 +175,4 @@ public class Calculator {
         return true;
     }
 }
+
