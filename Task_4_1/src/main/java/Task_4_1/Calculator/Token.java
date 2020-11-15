@@ -3,11 +3,21 @@ package Task_4_1.Calculator;
 import java.util.Objects;
 
 public class Token {
-    private static final double PI = 3.14159265359;
+    private final double real;
+    private final double imaginary;
+    private final String operation;
 
-    double real;
-    double imaginary;
-    String operation;
+    public double getReal() {
+        return real;
+    }
+
+    public double getImaginary() {
+        return imaginary;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
 
     /**
      * Initializer for complex number (or real, if "imaginary" = 0)
@@ -25,7 +35,7 @@ public class Token {
      * @param degrees - degrees
      */
     Token(double degrees) {
-        this.real = degrees * PI / 180;
+        this.real = degrees * Math.PI / 180;
         this.imaginary = 0;
         this.operation = "";
     }

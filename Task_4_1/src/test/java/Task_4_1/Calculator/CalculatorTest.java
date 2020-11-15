@@ -22,9 +22,9 @@ public class CalculatorTest extends TestCase {
 
         Assert.assertEquals(new Token(7, 0), calc.calculate("sqrt 49"));
         Assert.assertEquals(new Token(16, 0), calc.calculate("pow 2 4"));
-        Assert.assertTrue(calc.calculate("log 10").real > 2.302 && 2.303 > calc.calculate("log 10").real);
-        Assert.assertTrue(calc.calculate("sin 30°").real > 0.499 && 0.501 > calc.calculate("sin 30°").real);
-        Assert.assertTrue(calc.calculate("cos 60°").real > 0.499 && 0.501 > calc.calculate("cos 60°").real);
+        Assert.assertTrue(calc.calculate("log 10").getReal() > 2.302 && 2.303 > calc.calculate("log 10").getReal());
+        Assert.assertTrue(calc.calculate("sin 30°").getReal() > 0.499 && 0.501 > calc.calculate("sin 30°").getReal());
+        Assert.assertTrue(calc.calculate("cos 60°").getReal() > 0.499 && 0.501 > calc.calculate("cos 60°").getReal());
     }
 
     @Test
@@ -41,8 +41,8 @@ public class CalculatorTest extends TestCase {
     public void calculatorTestTriginimetry() {
         Calculator calc = new Calculator();
 
-        Assert.assertTrue(calc.calculate("+ * sin 57° sin 57° * cos 57° cos 57°").real > 0.999 && 1.001 > calc.calculate("+ * sin 57° sin 57° * cos 57° cos 57°").real);
-        Assert.assertTrue(calc.calculate("+ sin 30° cos 60°").real > 0.999 && 1.001 > calc.calculate("+ sin 30° cos 60°").real);
-        Assert.assertTrue(calc.calculate("+ sin 390° cos 420°").real > 0.999 && 1.001 > calc.calculate("+ sin 390° cos 4200°").real);
+        Assert.assertTrue(calc.calculate("+ * sin 57° sin 57° * cos 57° cos 57°").getReal() > 0.999 && 1.001 > calc.calculate("+ * sin 57° sin 57° * cos 57° cos 57°").getReal());
+        Assert.assertTrue(calc.calculate("+ sin 30° cos 60°").getReal() > 0.999 && 1.001 > calc.calculate("+ sin 30° cos 60°").getReal());
+        Assert.assertTrue(calc.calculate("+ sin 390° cos 420°").getReal() > 0.999 && 1.001 > calc.calculate("+ sin 390° cos 4200°").getReal());
     }
 }
