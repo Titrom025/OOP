@@ -1,13 +1,10 @@
-package Task_3_3.OrderedSet;
+package ru.nsu.fit.titkov.orderedset;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class OrderedSetTest {
 

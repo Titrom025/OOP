@@ -1,11 +1,10 @@
-package Task_3_3.OrderedSet;
+package ru.nsu.fit.titkov.orderedset;
 
 import java.util.*;
 
 public class OrderedSet<ElementType> {
-    Map<ElementType, Integer> nameToIdInList = new HashMap<>();
-    List<Element<ElementType>> elements = new ArrayList<>();
-
+    private final Map<ElementType, Integer> nameToIdInList = new HashMap<>();
+    private final List<Element<ElementType>> elements = new ArrayList<>();
     private int time;
 
     OrderedSet(ElementType[] elements) {
@@ -88,12 +87,12 @@ public class OrderedSet<ElementType> {
     private boolean startDFS() {
         time = 0;
         for (Element<ElementType> elem : elements) {
-            elem.setColor(VertexColor.White);
+            elem.setColor(VertexColor.WHITE);
             elem.setParentVertex(-1);
         }
 
         for (Element<ElementType> elem : elements) {
-            if (elem.getColor() == VertexColor.White) {
+            if (elem.getColor() == VertexColor.WHITE) {
                 if (dfs(elements.indexOf(elem), -1)) {
                     return true;
                 }
@@ -110,20 +109,20 @@ public class OrderedSet<ElementType> {
      */
     private boolean dfs(int vertex, int parent) {
         Element<ElementType> currElem = elements.get(vertex);
-        currElem.setColor(VertexColor.Gray);
+        currElem.setColor(VertexColor.GRAY);
         currElem.setParentVertex(parent);
 
         for (int childId : currElem.getRelations()) {
             Element<ElementType> childElem = elements.get(childId);
-            if (childElem.getColor() == VertexColor.Black) {
+            if (childElem.getColor() == VertexColor.BLACK) {
                 childElem.setParentVertex(vertex);
             }
-            if ((childElem.getColor() == VertexColor.Gray) || (childElem.getColor() == VertexColor.White && dfs(childId, vertex))) {
+            if ((childElem.getColor() == VertexColor.GRAY) || (childElem.getColor() == VertexColor.WHITE && dfs(childId, vertex))) {
                 return true;
             }
         }
 
-        currElem.setColor(VertexColor.Black);
+        currElem.setColor(VertexColor.BLACK);
         currElem.setTime(time++);
         return false;
     }
