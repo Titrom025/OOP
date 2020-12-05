@@ -2,6 +2,7 @@ package ru.nsu.fit.titkov.notebook;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import picocli.CommandLine;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -32,23 +33,6 @@ public class Notebook {
         }
     }
 
-    private static void addNote(UserNote note) {
-        notes.add(note);
-        saveNotesToJson();
-    }
-
-    private static void removeNote(String title) {
-        List<UserNote> notesToRemove = notes.stream()
-                .map(a -> a.getTitle().equals(title) ? a : null)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        for (UserNote note : notesToRemove) {
-            notes.remove(note);
-        }
-
-        saveNotesToJson();
-    }
-
     private static void saveNotesToJson() {
         Gson gson = new Gson();
         String JSON = gson.toJson(notes);
@@ -58,16 +42,27 @@ public class Notebook {
             e.printStackTrace();
         }
     }
+
+    private static void addNote(UserNote note) {
+        notes.add(note);
+        saveNotesToJson();
+    }
+
+    private static void removeNote(String title) {
+        notes.removeIf(a -> a.getTitle().equals(title));
+        saveNotesToJson();
+    }
+
     /**
      * The main function, which take arguments and make specific actions based on arguments
-     * if first argument is "add":
+     * if the first argument is "add":
      *     If there are one more arg, then the new note added with the title arg
      *     If there are two more args, then the new note added with the title arg1 and description arg2
      *
-     * if first argument is "add":
+     * if the first argument is "rm":
      *     If there are one more arg, then the note with the title arg1 will be removed from notes list
      *
-     * if first argument is "show":
+     * if the first argument is "show":
      *     If there are no more args, then the program will print all notes
      *     If there are two more args, then the program will print notes,
      *          which date is more than arg1 date and less than arg2 date
@@ -79,62 +74,57 @@ public class Notebook {
      * @param args - args from terminal
      */
     public static void main(String[] args) throws ParseException {
+        CommandArgs commandArgs = new CommandArgs();
+        new CommandLine(commandArgs).parseArgs(args);
+
+
         try {
             readJsonToList();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        if (args.length == 0) {
-            System.out.println("There are no arguments!");
-            return;
-        }
-
-        if (args[0].equals("add")) {
-            if (args.length == 1) {
+        if (commandArgs.addNote != null) {
+            if (commandArgs.parameters == null) {
                 System.out.println("There are not enough arguments to add note!");
                 return;
             }
+
             String description = "";
-            if (args.length >= 3) {
-                description = args[2];
+            if (commandArgs.parameters.length >= 2) {
+                description = commandArgs.parameters[1];
             }
-            UserNote note = new UserNote(args[1], description);
+            UserNote note = new UserNote(commandArgs.parameters[0], description);
             addNote(note);
             return;
         }
 
-        if (args[0].equals("rm")) {
-            if (args.length == 1) {
-                System.out.println("There are not enough arguments to rm note!");
-                return;
-            }
-
-            removeNote(args[1]);
+        if (commandArgs.noteToRemove != null) {
+            removeNote(commandArgs.noteToRemove);
             return;
         }
 
-        if (args[0].equals("show")) {
-            if (args.length == 1) {
+        if (commandArgs.showNotes != null) {
+            if (commandArgs.parameters == null) {
                 printList(notes);
                 return;
-            } else if (args.length >= 3) {
+            } else if (commandArgs.parameters.length >= 2) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-                Date dateBottom = dateFormat.parse(args[1]);
-                Date dateUp = dateFormat.parse(args[2]);
+                Date dateBottom = dateFormat.parse(commandArgs.parameters[0]);
+                Date dateUp = dateFormat.parse(commandArgs.parameters[1]);
 
                 List<UserNote> notesInTimePeriod = notes.stream()
                         .map(note -> note.getDate().after(dateBottom) && note.getDate().before(dateUp) ? note : null)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
 
-                if (args.length == 3) {
+                if (commandArgs.parameters.length == 2) {
                     printList(notesInTimePeriod);
                     return;
                 }
 
                 List<UserNote> notesWithKeyWords = new ArrayList<>();
-                for (int i = 3; i < args.length; i++) {
+                for (int i = 2; i < commandArgs.parameters.length; i++) {
                     int index = i;
                     List<UserNote> notesWithKeyWord = notes.stream()
                             .map(note -> note.getTitle().contains(args[index]) ? note : null)

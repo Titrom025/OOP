@@ -6,8 +6,8 @@ import lombok.Getter;
 
 public class UserNote {
     @Getter private final String title;
-    @Getter private final String description;
     @Getter private final Date date;
+    private final String description;
 
     UserNote(String title, String description) {
         this.title = title;
