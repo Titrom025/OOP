@@ -1,4 +1,4 @@
-package Task_1_3.SnakeGame;
+package edu.nsu.task_1_3.snake_game;
 
 public enum CellDirection {
     left, left_up, left_down,

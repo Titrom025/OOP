@@ -1,23 +1,23 @@
-package Task_1_3.SnakeGame;
+package edu.nsu.task_1_3.snake_game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.Random;
 
-public class Food {
+public final class Food {
     int x;
     int y;
     int color;
 
-    public void newFood(int width, int height) {
+    public void newFood(final int width, final int height) {
         Random rand = new Random();
         x = rand.nextInt(width);
         y = rand.nextInt(height);
         color = rand.nextInt(5);
     }
 
-    public void drawFood(GraphicsContext gc, int cellSize) {
+    public void drawFood(final GraphicsContext gc, final int cellSize) {
         Color cc = switch (color) {
             case 0 -> Color.GREEN;
             case 1 -> Color.BLUE;

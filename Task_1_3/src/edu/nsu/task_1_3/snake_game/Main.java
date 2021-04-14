@@ -1,4 +1,4 @@
-package Task_1_3.SnakeGame;
+package edu.nsu.task_1_3.snake_game;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -51,7 +51,7 @@ public class Main extends Application {
     private static boolean gameOver = false;
 
 
-    public void start(Stage primaryStage) {
+    public void start(final Stage primaryStage) {
         try {
             createFood();
             VBox root = new VBox();
@@ -60,7 +60,7 @@ public class Main extends Application {
             root.getChildren().add(c);
             new AnimationTimer() {
                 long lastTick = 0;
-                public void handle(long now) {
+                public void handle(final long now) {
                     if (lastTick == 0) {
                         lastTick = now;
                         tick(gc);
@@ -98,7 +98,7 @@ public class Main extends Application {
         }
     }
 
-    public static void tick(GraphicsContext gc) {
+    public static void tick(final GraphicsContext gc) {
         if (gameOver) {
             return;
         }
@@ -125,12 +125,12 @@ public class Main extends Application {
     }
 
 
-    private static void drawFrame(GraphicsContext gc) {
+    private static void drawFrame(final GraphicsContext gc) {
         drawGame(gc);
         drawMenu(gc);
     }
 
-    private static void drawGame(GraphicsContext gc) {
+    private static void drawGame(final GraphicsContext gc) {
         gc.setFill(CELL_BORDER_COLOR);
         gc.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
@@ -145,7 +145,7 @@ public class Main extends Application {
         snake.drawSnake(gc, cellSize);
     }
 
-    private static void drawMenu(GraphicsContext gc) {
+    private static void drawMenu(final GraphicsContext gc) {
         gc.setFill(Color.BLACK);
         gc.fillRect(GAME_WIDTH, 0, MENU_WIDTH, GAME_HEIGHT);
 
