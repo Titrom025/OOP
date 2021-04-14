@@ -3,7 +3,7 @@ package edu.nsu.task_1_3.snake_game;
 public final class SnakeCell {
     private int x;
     private int y;
-    final private int position;
+    private final int position;
     private CellDirection direction = CellDirection.left;
 
     public SnakeCell(final int x, final int y, final int position) {

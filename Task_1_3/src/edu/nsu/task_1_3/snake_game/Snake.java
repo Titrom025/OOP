@@ -10,7 +10,7 @@ import java.util.List;
 public final class Snake {
     private final List<SnakeCell> snake = new ArrayList<>();
     private static final Color SNAKE_COLOR = Color.rgb(191, 227, 78);
-    int size = 0;
+    private int size = 0;
 
     public Snake(final int x, final int y) {
         addCell(x, y);
@@ -70,6 +70,8 @@ public final class Snake {
                     snake.get(1).setDirection(CellDirection.down_right);
                 }
             }
+
+            default -> {}
         }
     }
 
@@ -81,101 +83,107 @@ public final class Snake {
     }
 
     boolean checkForFoodIntersection(final int x, final int y) {
-        return (x == snake.get(0).getX() && y == snake.get(0).getY());
+        for (SnakeCell cell : snake) {
+            if (x == cell.getX() && y == cell.getY()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     void drawSnake(final GraphicsContext gc, final int cellSize) {
-        for (SnakeCell c : snake) {
+        for (SnakeCell cell : snake) {
             gc.setFill(Color.LIGHTCORAL);
 
-            if (c.getPosition() == 0) {
+            if (cell.getPosition() == 0) {
                 gc.fillOval(
-                        c.getX() * cellSize + 3, c.getY() * cellSize + 3,
+                        cell.getX() * cellSize + 3, cell.getY() * cellSize + 3,
                         cellSize - 6, cellSize - 6
                 );
-                switch (c.getDirection()) {
+                switch (cell.getDirection()) {
                     case up -> gc.fillRect(
-                            c.getX() * cellSize + 5, (c.getY() + 1) * cellSize - 15,
+                            cell.getX() * cellSize + 5, (cell.getY() + 1) * cellSize - 15,
                             cellSize - 10,  15
                     );
                     case down -> gc.fillRect(
-                            c.getX() * cellSize + 5, c.getY() * cellSize,
+                            cell.getX() * cellSize + 5, cell.getY() * cellSize,
                             cellSize - 10,  15
                     );
                     case left -> gc.fillRect(
-                            (c.getX() + 1) * cellSize - 15, c.getY() * cellSize + 5,
+                            (cell.getX() + 1) * cellSize - 15, cell.getY() * cellSize + 5,
                             15,  cellSize - 10
                     );
                     case right -> gc.fillRect(
-                            c.getX() * cellSize, c.getY() * cellSize + 5,
+                            cell.getX() * cellSize, cell.getY() * cellSize + 5,
                             15,  cellSize - 10
                     );
-                    default -> {}
+                    default -> { }
                 }
-            } else if (c.getPosition() == size - 1) {
-                switch (c.getDirection()) {
+            } else if (cell.getPosition() == size - 1) {
+                switch (cell.getDirection()) {
                     case up, right_up, left_up ->
                             gc.fillArc(
-                                    c.getX() * cellSize + 5, (c.getY() - 1)  * cellSize + 10,
+                                    cell.getX() * cellSize + 5, (cell.getY() - 1)  * cellSize + 10,
                                     cellSize - 10,  2 * cellSize - 20,
                                     -180, 180, ArcType.ROUND
                             );
 
                     case down, right_down, left_down ->
                             gc.fillArc(
-                                    c.getX() * cellSize + 5, c.getY() * cellSize + 10,
+                                    cell.getX() * cellSize + 5, cell.getY() * cellSize + 10,
                                     cellSize - 10,  2 * cellSize - 20,
                                     0, 180, ArcType.ROUND
                             );
 
                     case left, down_left, up_left ->
                             gc.fillArc(
-                                    (c.getX() - 1) * cellSize + 10, c.getY() * cellSize + 5,
+                                    (cell.getX() - 1) * cellSize + 10, cell.getY() * cellSize + 5,
                                     2 * cellSize - 20,  cellSize - 10,
                                     -90, 180, ArcType.ROUND
                             );
 
                     case right, down_right, up_right ->
                             gc.fillArc(
-                                    c.getX() * cellSize + 10, c.getY() * cellSize + 5,
+                                    cell.getX() * cellSize + 10, cell.getY() * cellSize + 5,
                                     2 * cellSize - 20,  cellSize - 10,
                                     90, 180, ArcType.ROUND
                             );
 
+                    default -> { }
                 }
             } else {
-                switch (c.getDirection()) {
+                switch (cell.getDirection()) {
                     case up, down -> gc.fillRect(
-                            c.getX() * cellSize + 5, c.getY() * cellSize,
+                            cell.getX() * cellSize + 5, cell.getY() * cellSize,
                             cellSize - 10, cellSize
                     );
 
                     case left, right -> gc.fillRect(
-                            c.getX() * cellSize, c.getY() * cellSize + 5,
+                            cell.getX() * cellSize, cell.getY() * cellSize + 5,
                             cellSize, cellSize - 10
                     );
 
                     case left_up, down_right -> {
                         gc.fillArc(
-                                c.getX() * cellSize + 5, c.getY()  * cellSize - (cellSize - 20),
+                                cell.getX() * cellSize + 5, cell.getY()  * cellSize - (cellSize - 20),
                                 2 * cellSize - 20,  2 * cellSize - 25, -90, -90, ArcType.ROUND
                         );
                         gc.fillRect(
-                                c.getX() * cellSize + 5, c.getY() * cellSize,
+                                cell.getX() * cellSize + 5, cell.getY() * cellSize,
                                 cellSize - 10, 8
                         );
                         gc.fillRect(
-                                (c.getX() + 1) * cellSize - 5, c.getY() * cellSize + 5,
+                                (cell.getX() + 1) * cellSize - 5, cell.getY() * cellSize + 5,
                                 5, cellSize - 10
                         );
                         gc.fillRect(
-                                (c.getX() + 1) * cellSize - 6, c.getY() * cellSize + 1,
+                                (cell.getX() + 1) * cellSize - 6, cell.getY() * cellSize + 1,
                                 5, 5
                         );
 
                         gc.setFill(SNAKE_COLOR);
                         gc.fillArc(
-                                (c.getX() + 1) * cellSize - 5, c.getY()  * cellSize - 3,
+                                (cell.getX() + 1) * cellSize - 5, cell.getY()  * cellSize - 3,
                                 8,  8,
                                 -90, -90, ArcType.ROUND
                         );
@@ -183,26 +191,26 @@ public final class Snake {
 
                     case left_down, up_right -> {
                         gc.fillArc(
-                                c.getX() * cellSize + 5, c.getY()  * cellSize + (cellSize - 30),
+                                cell.getX() * cellSize + 5, cell.getY()  * cellSize + (cellSize - 30),
                                 2 * cellSize - 20,  2 * cellSize - 25,
                                 90, 90, ArcType.ROUND
                         );
                         gc.fillRect(
-                                c.getX() * cellSize + 5, (c.getY() + 1) * cellSize - 8,
+                                cell.getX() * cellSize + 5, (cell.getY() + 1) * cellSize - 8,
                                 cellSize - 10, 8
                         );
                         gc.fillRect(
-                                (c.getX() + 1) * cellSize - 5, c.getY() * cellSize + 5,
+                                (cell.getX() + 1) * cellSize - 5, cell.getY() * cellSize + 5,
                                 5, cellSize - 10
                         );
                         gc.fillRect(
-                                (c.getX() + 1) * cellSize - 6, (c.getY() + 1) * cellSize - 6,
+                                (cell.getX() + 1) * cellSize - 6, (cell.getY() + 1) * cellSize - 6,
                                 5, 5
                         );
 
                         gc.setFill(SNAKE_COLOR);
                         gc.fillArc(
-                                (c.getX() + 1) * cellSize - 5, (c.getY() + 1)  * cellSize - 5,
+                                (cell.getX() + 1) * cellSize - 5, (cell.getY() + 1)  * cellSize - 5,
                                 8,  8,
                                 90, 90, ArcType.ROUND
                         );
@@ -210,26 +218,26 @@ public final class Snake {
 
                     case right_up, down_left -> {
                         gc.fillArc(
-                                c.getX() * cellSize - 20, c.getY() * cellSize - (cellSize - 20),
+                                cell.getX() * cellSize - 20, cell.getY() * cellSize - (cellSize - 20),
                                 2 * cellSize - 20,  2 * cellSize - 25,
                                 -90, 90, ArcType.ROUND
                         );
                         gc.fillRect(
-                                c.getX() * cellSize + 5, c.getY() * cellSize,
+                                cell.getX() * cellSize + 5, cell.getY() * cellSize,
                                 cellSize - 10, 8
                         );
                         gc.fillRect(
-                                c.getX() * cellSize, c.getY() * cellSize + 5,
+                                cell.getX() * cellSize, cell.getY() * cellSize + 5,
                                 5, cellSize - 10
                         );
                         gc.fillRect(
-                                c.getX() * cellSize + 1, c.getY() * cellSize + 1,
+                                cell.getX() * cellSize + 1, cell.getY() * cellSize + 1,
                                 5, 5
                         );
 
                         gc.setFill(SNAKE_COLOR);
                         gc.fillArc(
-                                c.getX() * cellSize - 3, c.getY()  * cellSize - 3,
+                                cell.getX() * cellSize - 3, cell.getY()  * cellSize - 3,
                                 8,  8,
                                 -90, 90, ArcType.ROUND
                         );
@@ -237,26 +245,26 @@ public final class Snake {
 
                     case right_down, up_left -> {
                         gc.fillArc(
-                                c.getX() * cellSize - 20, c.getY()  * cellSize + (cellSize - 30),
+                                cell.getX() * cellSize - 20, cell.getY()  * cellSize + (cellSize - 30),
                                 2 * cellSize - 20,  2 * cellSize - 25,
                                 0, 90, ArcType.ROUND
                         );
                         gc.fillRect(
-                                c.getX() * cellSize + 5, (c.getY() + 1) * cellSize - 8,
+                                cell.getX() * cellSize + 5, (cell.getY() + 1) * cellSize - 8,
                                 cellSize - 10, 8
                         );
                         gc.fillRect(
-                                c.getX() * cellSize, c.getY() * cellSize + 5,
+                                cell.getX() * cellSize, cell.getY() * cellSize + 5,
                                 5, cellSize - 10
                         );
                         gc.fillRect(
-                                c.getX() * cellSize + 1, (c.getY() + 1) * cellSize - 6,
+                                cell.getX() * cellSize + 1, (cell.getY() + 1) * cellSize - 6,
                                 5, 5
                         );
 
                         gc.setFill(SNAKE_COLOR);
                         gc.fillArc(
-                                c.getX() * cellSize - 3, (c.getY() + 1) * cellSize - 5,
+                                cell.getX() * cellSize - 3, (cell.getY() + 1) * cellSize - 5,
                                 8,  8,
                                 0, 90, ArcType.ROUND
                         );

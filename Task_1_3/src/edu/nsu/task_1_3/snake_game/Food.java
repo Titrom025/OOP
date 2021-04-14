@@ -6,15 +6,23 @@ import javafx.scene.paint.Color;
 import java.util.Random;
 
 public final class Food {
-    int x;
-    int y;
-    int color;
+    private int x;
+    private int y;
+    private int color;
 
     public void newFood(final int width, final int height) {
         Random rand = new Random();
         x = rand.nextInt(width);
         y = rand.nextInt(height);
         color = rand.nextInt(5);
+    }
+
+    int getX() {
+        return x;
+    }
+
+    int getY() {
+        return y;
     }
 
     public void drawFood(final GraphicsContext gc, final int cellSize) {

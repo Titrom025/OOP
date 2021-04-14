@@ -12,26 +12,26 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-public class Main extends Application {
+public final class Main extends Application {
 
     private static final Color CELL_BORDER_COLOR = Color.rgb(161, 181, 91);
     private static final Color SNAKE_COLOR = Color.rgb(191, 227, 78);
 
-    private static final int cellSize = 35;
+    private static final int CELL_SIZE = 35;
 
     private static final int ROW_COUNT = 20;
     private static final int COLUMN_COUNT = 20;
 
-    private static final int GAME_WIDTH = ROW_COUNT * cellSize;
-    private static final int GAME_HEIGHT = COLUMN_COUNT * cellSize;
+    private static final int GAME_WIDTH = ROW_COUNT * CELL_SIZE;
+    private static final int GAME_HEIGHT = COLUMN_COUNT * CELL_SIZE;
     private static final int MENU_WIDTH = 200;
 
     private static final int CENTER_X = COLUMN_COUNT / 2;
     private static final int CENTER_Y = ROW_COUNT / 2;
 
-    private static final int GAME_OVER_TEXT_SIZE = 50;
-    private static final int GAME_OVER_TEXT_OFFSET_X = CENTER_X * cellSize - 150;
-    private static final int GAME_OVER_TEXT_OFFSET_Y = CENTER_Y * cellSize;
+    private static final int GAMEOVER_TEXT_SIZE = 50;
+    private static final int GAMEOVER_TEXT_OFFSET_X = CENTER_X * CELL_SIZE - 150;
+    private static final int GAMEOVER_TEXT_OFFSET_Y = CENTER_Y * CELL_SIZE;
 
     private static final int SCORE_TEXT_SIZE = 30;
     private static final int SCORE_TEXT_OFFSET_X = 50;
@@ -42,8 +42,8 @@ public class Main extends Application {
     private static double speed = 2;
     private static final double SPEED_STEP = 0.1;
 
-    private final static Snake snake = new Snake(CENTER_X, CENTER_Y);
-    private final static Food food = new Food();
+    private final Snake snake = new Snake(CENTER_X, CENTER_Y);
+    private final Food food = new Food();
 
     private static Direction direction = Direction.left;
     private static Direction directionToSet = direction;
@@ -59,7 +59,7 @@ public class Main extends Application {
             GraphicsContext gc = c.getGraphicsContext2D();
             root.getChildren().add(c);
             new AnimationTimer() {
-                long lastTick = 0;
+                private long lastTick = 0;
                 public void handle(final long now) {
                     if (lastTick == 0) {
                         lastTick = now;
@@ -67,7 +67,7 @@ public class Main extends Application {
 
                         return;
                     }
-                    if (now - lastTick > BASE_TIME_INTERVAL / speed ) {
+                    if (now - lastTick > BASE_TIME_INTERVAL / speed) {
                         lastTick = now;
                         tick(gc);
                     }
@@ -98,14 +98,14 @@ public class Main extends Application {
         }
     }
 
-    public static void tick(final GraphicsContext gc) {
+    public void tick(final GraphicsContext gc) {
         if (gameOver) {
             return;
         }
 
         direction = directionToSet;
 
-        if (snake.checkForFoodIntersection(food.x, food.y)) {
+        if (snake.checkForFoodIntersection(food.getX(), food.getY())) {
             createFood();
             snake.addCell(CENTER_X, CENTER_Y);
             speed += SPEED_STEP;
@@ -113,53 +113,55 @@ public class Main extends Application {
 
         snake.move(direction);
 
-        if (snake.chechForBoundaryIntersection(COLUMN_COUNT, ROW_COUNT) || snake.checkForSnakeIntersection()) {
+        if (snake.chechForBoundaryIntersection(COLUMN_COUNT, ROW_COUNT)
+                || snake.checkForSnakeIntersection()) {
             gameOver = true;
             gc.setFill(Color.RED);
-            gc.setFont(new Font("", GAME_OVER_TEXT_SIZE));
-            gc.fillText("GAME OVER", GAME_OVER_TEXT_OFFSET_X, GAME_OVER_TEXT_OFFSET_Y);
-        }
-        else {
+            gc.setFont(new Font("", GAMEOVER_TEXT_SIZE));
+            gc.fillText("GAME OVER", GAMEOVER_TEXT_OFFSET_X, GAMEOVER_TEXT_OFFSET_Y);
+        } else {
             drawFrame(gc);
         }
     }
 
 
-    private static void drawFrame(final GraphicsContext gc) {
+    private void drawFrame(final GraphicsContext gc) {
         drawGame(gc);
         drawMenu(gc);
     }
 
-    private static void drawGame(final GraphicsContext gc) {
+    private void drawGame(final GraphicsContext gc) {
         gc.setFill(CELL_BORDER_COLOR);
         gc.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
         for (int i = 0; i < ROW_COUNT; i++) {
             for (int j = 0; j < COLUMN_COUNT; j++) {
                 gc.setFill(SNAKE_COLOR);
-                gc.fillRect(i * cellSize + 1, j * cellSize + 1, cellSize - 2, cellSize - 2);
+                gc.fillRect(i * CELL_SIZE + 1, j * CELL_SIZE + 1,
+                        CELL_SIZE - 2, CELL_SIZE - 2);
             }
         }
 
-        food.drawFood(gc, cellSize);
-        snake.drawSnake(gc, cellSize);
+        food.drawFood(gc, CELL_SIZE);
+        snake.drawSnake(gc, CELL_SIZE);
     }
 
-    private static void drawMenu(final GraphicsContext gc) {
+    private void drawMenu(final GraphicsContext gc) {
         gc.setFill(Color.BLACK);
         gc.fillRect(GAME_WIDTH, 0, MENU_WIDTH, GAME_HEIGHT);
 
         gc.setFill(Color.WHITE);
         gc.setFont(new Font("", SCORE_TEXT_SIZE));
-        gc.fillText("Score: " + ((int) (10 * speed - 20)), GAME_WIDTH + SCORE_TEXT_OFFSET_X, SCORE_TEXT_OFFSET_Y);
+        gc.fillText("Score: " + ((int) (10 * speed - 20)),
+                GAME_WIDTH + SCORE_TEXT_OFFSET_X, SCORE_TEXT_OFFSET_Y);
     }
 
-    private static void createFood() {
+    private void createFood() {
         do {
             food.newFood(ROW_COUNT, COLUMN_COUNT);
-        } while (snake.checkForFoodIntersection(food.x, food.y));
+        } while (snake.checkForFoodIntersection(food.getX(), food.getY()));
     }
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         launch(args);
     }
 }
