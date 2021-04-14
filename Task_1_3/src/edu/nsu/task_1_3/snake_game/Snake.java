@@ -71,7 +71,7 @@ public final class Snake {
                 }
             }
 
-            default -> {}
+            default -> { }
         }
     }
 
@@ -269,6 +269,8 @@ public final class Snake {
                                 0, 90, ArcType.ROUND
                         );
                     }
+
+                    default -> { }
                 }
             }
         }
