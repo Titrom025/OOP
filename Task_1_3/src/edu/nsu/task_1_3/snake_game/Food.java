@@ -3,6 +3,7 @@ package edu.nsu.task_1_3.snake_game;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.List;
 import java.util.Random;
 
 public final class Food {
@@ -36,5 +37,15 @@ public final class Food {
         };
         gc.setFill(cc);
         gc.fillOval(x * cellSize + 5, y * cellSize + 5, cellSize - 10, cellSize - 10);
+    }
+
+    boolean checkForBarriersIntersection(final List<Barrier> barriers) {
+        for (Barrier barrier : barriers) {
+            if (barrier.getX() == x
+                    && barrier.getY() == y) {
+                return true;
+            }
+        }
+        return false;
     }
 }

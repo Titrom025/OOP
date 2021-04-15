@@ -75,11 +75,29 @@ public final class Snake {
         }
     }
 
-    boolean chechForBoundaryIntersection(final int height, final int width) {
-        return  (snake.get(0).getY() < 0
-                || snake.get(0).getY() >= height
-                || snake.get(0).getX() < 0
-                || snake.get(0).getX() >= width);
+    void checkForBoundaryIntersection(final int height, final int width) {
+        if (snake.get(0).getY() < 0) {
+            snake.get(0).setY(height - 1);
+        }
+        if (snake.get(0).getY() >= height) {
+            snake.get(0).setY(0);
+        }
+        if (snake.get(0).getX() < 0) {
+            snake.get(0).setX(width - 1);
+        }
+        if (snake.get(0).getX() >= width) {
+            snake.get(0).setX(0);
+        }
+    }
+
+    boolean checkForBarriersIntersection(final List<Barrier> barriers) {
+        for (Barrier barrier : barriers) {
+            if (barrier.getX() == snake.get(0).getX()
+                    && barrier.getY() == snake.get(0).getY()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     boolean checkForFoodIntersection(final int x, final int y) {

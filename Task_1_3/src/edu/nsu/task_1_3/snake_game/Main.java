@@ -12,6 +12,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public final class Main extends Application {
 
     private static final Color CELL_BORDER_COLOR = Color.rgb(161, 181, 91);
@@ -37,6 +41,8 @@ public final class Main extends Application {
     private static final int SCORE_TEXT_OFFSET_X = 50;
     private static final int SCORE_TEXT_OFFSET_Y = 50;
 
+    private static final int BARRIERS_COUNT = 5;
+
     private static final long BASE_TIME_INTERVAL = 500_000_000;
 
     private static double speed = 2;
@@ -44,6 +50,7 @@ public final class Main extends Application {
 
     private final Snake snake = new Snake(CENTER_X, CENTER_Y);
     private final Food food = new Food();
+    private final List<Barrier> barriers = new ArrayList<>();
 
     private static Direction direction = Direction.left;
     private static Direction directionToSet = direction;
@@ -54,6 +61,10 @@ public final class Main extends Application {
     public void start(final Stage primaryStage) {
         try {
             createFood();
+            for (int i = 0; i < BARRIERS_COUNT; i++) {
+                generateBarriers(COLUMN_COUNT, ROW_COUNT);
+            }
+
             VBox root = new VBox();
             Canvas c = new Canvas(GAME_WIDTH + MENU_WIDTH, GAME_HEIGHT);
             GraphicsContext gc = c.getGraphicsContext2D();
@@ -112,9 +123,9 @@ public final class Main extends Application {
         }
 
         snake.move(direction);
+        snake.checkForBoundaryIntersection(COLUMN_COUNT, ROW_COUNT);
 
-        if (snake.chechForBoundaryIntersection(COLUMN_COUNT, ROW_COUNT)
-                || snake.checkForSnakeIntersection()) {
+        if (snake.checkForSnakeIntersection() || snake.checkForBarriersIntersection(barriers)) {
             gameOver = true;
             gc.setFill(Color.RED);
             gc.setFont(new Font("", GAMEOVER_TEXT_SIZE));
@@ -142,6 +153,13 @@ public final class Main extends Application {
             }
         }
 
+        for (Barrier barrier: barriers) {
+            gc.setFill(Color.GREEN);
+            gc.fillRect(barrier.getX() * CELL_SIZE, barrier.getY() * CELL_SIZE,
+                    CELL_SIZE, CELL_SIZE);
+        }
+
+
         food.drawFood(gc, CELL_SIZE);
         snake.drawSnake(gc, CELL_SIZE);
     }
@@ -159,7 +177,35 @@ public final class Main extends Application {
     private void createFood() {
         do {
             food.newFood(ROW_COUNT, COLUMN_COUNT);
-        } while (snake.checkForFoodIntersection(food.getX(), food.getY()));
+        } while (snake.checkForFoodIntersection(food.getX(), food.getY())
+                || food.checkForBarriersIntersection(barriers));
+    }
+
+    private void generateBarriers(final int columnCount, final int rowCount) {
+        Random rand = new Random();
+        int length = rand.nextInt(5) + 3;
+        int x, y;
+        int xDirection, yDirection;
+
+        do {
+            x = rand.nextInt(columnCount - 4) + 2;
+            y = rand.nextInt(rowCount - 4) + 2;
+        } while (Math.abs(x - CENTER_X) < 5 && Math.abs(y - CENTER_Y) < 5);
+
+        do {
+            xDirection = rand.nextInt(3) - 1;
+            yDirection = rand.nextInt(3) - 1;
+        } while (xDirection == 0 && yDirection == 0);
+
+        for (int i = 0; i < length; i++) {
+            if (x + xDirection * i >= 0 && x + xDirection * i < columnCount
+                    && y + yDirection * i >= 0 && y + yDirection * i < rowCount
+                    && !((y + yDirection * i == CENTER_Y)
+                        && (CENTER_X -  x - xDirection * i >= 0
+                        && CENTER_X -  x - xDirection * i <= 5))) {
+                barriers.add(new Barrier(x + xDirection * i, y + yDirection * i));
+            }
+        }
     }
     public static void main(final String[] args) {
         launch(args);
