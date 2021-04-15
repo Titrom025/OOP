@@ -184,8 +184,10 @@ public final class Main extends Application {
     private void generateBarriers(final int columnCount, final int rowCount) {
         Random rand = new Random();
         int length = rand.nextInt(5) + 3;
-        int x, y;
-        int xDirection, yDirection;
+        int x;
+        int y;
+        int xDirection;
+        int yDirection;
 
         do {
             x = rand.nextInt(columnCount - 4) + 2;

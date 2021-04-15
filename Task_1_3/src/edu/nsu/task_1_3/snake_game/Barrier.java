@@ -1,6 +1,6 @@
 package edu.nsu.task_1_3.snake_game;
 
-public class Barrier {
+public final class Barrier {
     private final int x;
     private final int y;
 
