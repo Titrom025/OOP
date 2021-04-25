@@ -40,12 +40,6 @@ public final class Food {
     }
 
     boolean checkForBarriersIntersection(final List<Barrier> barriers) {
-        for (Barrier barrier : barriers) {
-            if (barrier.getX() == x
-                    && barrier.getY() == y) {
-                return true;
-            }
-        }
-        return false;
+        return barriers.stream().anyMatch(barrier -> barrier.getX() == x && barrier.getY() == y);
     }
 }

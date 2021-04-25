@@ -4,7 +4,7 @@ public final class SnakeCell {
     private int x;
     private int y;
     private final int position;
-    private CellDirection direction = CellDirection.left;
+    private CellDirection direction = CellDirection.LEFT;
 
     public SnakeCell(final int x, final int y, final int position) {
         this.x = x;

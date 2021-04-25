@@ -42,17 +42,21 @@ public final class Main extends Application {
     private static final int SCORE_TEXT_OFFSET_Y = 50;
 
     private static final int BARRIERS_COUNT = 5;
+    private static int OPPONENTS_COUNT = 3;
 
     private static final long BASE_TIME_INTERVAL = 500_000_000;
 
     private static double speed = 2;
     private static final double SPEED_STEP = 0.1;
 
-    private final Snake snake = new Snake(CENTER_X, CENTER_Y);
+    private final Snake snake = new Snake(CENTER_X, CENTER_Y, Color.CORAL, 0);
+    private final List<Snake> opponents = new ArrayList<>();
+    private final List<Direction> opponents_Dirs = new ArrayList<>();
+
     private final Food food = new Food();
     private final List<Barrier> barriers = new ArrayList<>();
 
-    private static Direction direction = Direction.left;
+    private static Direction direction = Direction.LEFT;
     private static Direction directionToSet = direction;
 
     private static boolean gameOver = false;
@@ -60,10 +64,23 @@ public final class Main extends Application {
 
     public void start(final Stage primaryStage) {
         try {
-            createFood();
             for (int i = 0; i < BARRIERS_COUNT; i++) {
                 generateBarriers(COLUMN_COUNT, ROW_COUNT);
             }
+
+            for (int i = 0; i < OPPONENTS_COUNT; i++) {
+                Random random = new Random();
+                int spawnX = generateCoordinate(COLUMN_COUNT);
+                int spawnY = generateCoordinate(ROW_COUNT);
+                int r = random.nextInt(255);
+                int g = random.nextInt(255);
+                int b = random.nextInt(255);
+                int chance = 20 * (random.nextInt(2) + 2);
+                opponents.add(new Snake(spawnX, spawnY, Color.rgb(r, g, b), chance));
+                opponents_Dirs.add(Direction.RIGHT);
+            }
+
+            createFood();
 
             VBox root = new VBox();
             Canvas c = new Canvas(GAME_WIDTH + MENU_WIDTH, GAME_HEIGHT);
@@ -75,10 +92,7 @@ public final class Main extends Application {
                     if (lastTick == 0) {
                         lastTick = now;
                         tick(gc);
-
-                        return;
-                    }
-                    if (now - lastTick > BASE_TIME_INTERVAL / speed) {
+                    } else if (now - lastTick > BASE_TIME_INTERVAL / speed) {
                         lastTick = now;
                         tick(gc);
                     }
@@ -87,17 +101,17 @@ public final class Main extends Application {
             Scene scene = new Scene(root, GAME_WIDTH + MENU_WIDTH, GAME_HEIGHT);
 
             scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
-                if (key.getCode() == KeyCode.W && direction != Direction.down) {
-                    directionToSet = Direction.up;
+                if (key.getCode() == KeyCode.W && direction != Direction.DOWN) {
+                    directionToSet = Direction.UP;
                 }
-                if (key.getCode() == KeyCode.A && direction != Direction.right) {
-                    directionToSet = Direction.left;
+                if (key.getCode() == KeyCode.A && direction != Direction.RIGHT) {
+                    directionToSet = Direction.LEFT;
                 }
-                if (key.getCode() == KeyCode.S && direction != Direction.up) {
-                    directionToSet = Direction.down;
+                if (key.getCode() == KeyCode.S && direction != Direction.UP) {
+                    directionToSet = Direction.DOWN;
                 }
-                if (key.getCode() == KeyCode.D && direction != Direction.left) {
-                    directionToSet = Direction.right;
+                if (key.getCode() == KeyCode.D && direction != Direction.LEFT) {
+                    directionToSet = Direction.RIGHT;
                 }
             });
 
@@ -109,6 +123,12 @@ public final class Main extends Application {
         }
     }
 
+    private void stopGame(GraphicsContext gc) {
+        gameOver = true;
+        gc.setFill(Color.RED);
+        gc.setFont(new Font("", GAMEOVER_TEXT_SIZE));
+        gc.fillText("GAME OVER", GAMEOVER_TEXT_OFFSET_X, GAMEOVER_TEXT_OFFSET_Y);
+    }
     public void tick(final GraphicsContext gc) {
         if (gameOver) {
             return;
@@ -122,16 +142,50 @@ public final class Main extends Application {
             speed += SPEED_STEP;
         }
 
+        for (Snake opponent : opponents) {
+            if (opponent.checkForFoodIntersection(food.getX(), food.getY())) {
+                createFood();
+                opponent.addCell(CENTER_X, CENTER_Y);
+            }
+        }
+
+        for (Snake opponent: opponents) {
+            int cell = snake.checkForAnotherSnake(opponent.getCells());
+
+            if (cell > 1) {
+                opponent.deleteTail(cell);
+            } else if (cell >= 0) {
+                if (opponent.checkForAnotherSnake(snake.getCells()) >= 0) {
+                    gameOver = true;
+                    stopGame(gc);
+                    return;
+                } else {
+                    opponent.deleteTail(cell);
+                }
+            }
+        }
+
         snake.move(direction);
         snake.checkForBoundaryIntersection(COLUMN_COUNT, ROW_COUNT);
 
-        if (snake.checkForSnakeIntersection() || snake.checkForBarriersIntersection(barriers)) {
-            gameOver = true;
-            gc.setFill(Color.RED);
-            gc.setFont(new Font("", GAMEOVER_TEXT_SIZE));
-            gc.fillText("GAME OVER", GAMEOVER_TEXT_OFFSET_X, GAMEOVER_TEXT_OFFSET_Y);
-        } else {
-            drawFrame(gc);
+        for (Snake opponent: opponents) {
+            opponent.moveOpponents(COLUMN_COUNT, ROW_COUNT, barriers);
+            if (opponent.getSize() == 0) {
+                opponents.remove(opponent);
+                OPPONENTS_COUNT--;
+            }
+        }
+
+
+        if (snake.checkForBarriersIntersection(barriers)) {
+            stopGame(gc);
+            return;
+        }
+
+        drawFrame(gc);
+
+        if (snake.checkForSnakeIntersection()) {
+            stopGame(gc);
         }
     }
 
@@ -159,9 +213,12 @@ public final class Main extends Application {
                     CELL_SIZE, CELL_SIZE);
         }
 
-
         food.drawFood(gc, CELL_SIZE);
         snake.drawSnake(gc, CELL_SIZE);
+
+        for (Snake opponent : opponents) {
+            opponent.drawSnake(gc, CELL_SIZE);
+        }
     }
 
     private void drawMenu(final GraphicsContext gc) {
@@ -178,26 +235,35 @@ public final class Main extends Application {
         do {
             food.newFood(ROW_COUNT, COLUMN_COUNT);
         } while (snake.checkForFoodIntersection(food.getX(), food.getY())
-                || food.checkForBarriersIntersection(barriers));
+                || food.checkForBarriersIntersection(barriers)
+                || checkFoodIntersectionForOpponents(food.getX(), food.getY()));
     }
 
+    private boolean checkFoodIntersectionForOpponents(int foodX, int foodY) {
+        return opponents.stream().anyMatch(opponent -> opponent.checkForFoodIntersection(foodX, foodY));
+    }
+
+    private int generateCoordinate(int maxValue) {
+        Random rand = new Random();
+        int x;
+        do {
+            x = rand.nextInt(maxValue - 4) + 2;
+        } while (Math.abs(x - CENTER_X) < 5);
+
+       return x;
+    }
     private void generateBarriers(final int columnCount, final int rowCount) {
         Random rand = new Random();
         int length = rand.nextInt(5) + 3;
-        int x;
-        int y;
         int xDirection;
         int yDirection;
-
-        do {
-            x = rand.nextInt(columnCount - 4) + 2;
-            y = rand.nextInt(rowCount - 4) + 2;
-        } while (Math.abs(x - CENTER_X) < 5 && Math.abs(y - CENTER_Y) < 5);
-
         do {
             xDirection = rand.nextInt(3) - 1;
             yDirection = rand.nextInt(3) - 1;
         } while (xDirection == 0 && yDirection == 0);
+
+        int x = generateCoordinate(columnCount);
+        int y = generateCoordinate(rowCount);
 
         for (int i = 0; i < length; i++) {
             if (x + xDirection * i >= 0 && x + xDirection * i < columnCount
@@ -209,6 +275,7 @@ public final class Main extends Application {
             }
         }
     }
+
     public static void main(final String[] args) {
         launch(args);
     }
