@@ -168,22 +168,22 @@ public final class Main extends Application {
                 snake.deleteTail(opponentCollision);
             }
 
-            for (Snake second_opponent: opponents) {
-                if (opponent == second_opponent) {
+            for (Snake secondOpponent: opponents) {
+                if (opponent == secondOpponent) {
                     continue;
                 }
 
-                cell = opponent.checkForAnotherSnake(second_opponent.getCells());
+                cell = opponent.checkForAnotherSnake(secondOpponent.getCells());
 
                 if (cell > 1) {
-                    second_opponent.deleteTail(cell);
+                    secondOpponent.deleteTail(cell);
                 } else if (cell >= 0) {
-                    if (second_opponent.checkForAnotherSnake(opponent.getCells()) >= 0) {
-                        opponents.remove(second_opponent);
+                    if (secondOpponent.checkForAnotherSnake(opponent.getCells()) >= 0) {
+                        opponents.remove(secondOpponent);
                         opponents.remove(opponent);
                         break;
                     } else {
-                        second_opponent.deleteTail(cell);
+                        secondOpponent.deleteTail(cell);
                     }
                 }
             }
@@ -199,7 +199,6 @@ public final class Main extends Application {
                 opponentsCount--;
             }
         }
-
 
         if (snake.checkForBarriersIntersection(barriers)) {
             stopGame(gc);
