@@ -151,16 +151,42 @@ public final class Main extends Application {
 
         for (Snake opponent: opponents) {
             int cell = snake.checkForAnotherSnake(opponent.getCells());
+            int opponent_collision = opponent.checkForAnotherSnake(snake.getCells());
 
             if (cell > 1) {
                 opponent.deleteTail(cell);
             } else if (cell >= 0) {
-                if (opponent.checkForAnotherSnake(snake.getCells()) >= 0) {
+
+                if (opponent_collision >= 0 && opponent_collision <= 1) {
                     gameOver = true;
                     stopGame(gc);
                     return;
                 } else {
                     opponent.deleteTail(cell);
+                }
+            }
+
+            if (opponent_collision > 0) {
+                snake.deleteTail(opponent_collision);
+            }
+
+            for (Snake second_opponent: opponents) {
+                if (opponent == second_opponent) {
+                    continue;
+                }
+
+                cell = opponent.checkForAnotherSnake(second_opponent.getCells());
+
+                if (cell > 1) {
+                    second_opponent.deleteTail(cell);
+                } else if (cell >= 0) {
+                    if (second_opponent.checkForAnotherSnake(opponent.getCells()) >= 0) {
+                        opponents.remove(second_opponent);
+                        opponents.remove(opponent);
+                        break;
+                    } else {
+                        second_opponent.deleteTail(cell);
+                    }
                 }
             }
         }
