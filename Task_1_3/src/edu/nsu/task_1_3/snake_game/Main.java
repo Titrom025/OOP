@@ -42,7 +42,7 @@ public final class Main extends Application {
     private static final int SCORE_TEXT_OFFSET_Y = 50;
 
     private static final int BARRIERS_COUNT = 5;
-    private static int OPPONENTS_COUNT = 3;
+    private static int opponentsCount = 3;
 
     private static final long BASE_TIME_INTERVAL = 500_000_000;
 
@@ -51,7 +51,6 @@ public final class Main extends Application {
 
     private final Snake snake = new Snake(CENTER_X, CENTER_Y, Color.CORAL, 0);
     private final List<Snake> opponents = new ArrayList<>();
-    private final List<Direction> opponents_Dirs = new ArrayList<>();
 
     private final Food food = new Food();
     private final List<Barrier> barriers = new ArrayList<>();
@@ -68,7 +67,7 @@ public final class Main extends Application {
                 generateBarriers(COLUMN_COUNT, ROW_COUNT);
             }
 
-            for (int i = 0; i < OPPONENTS_COUNT; i++) {
+            for (int i = 0; i < opponentsCount; i++) {
                 Random random = new Random();
                 int spawnX = generateCoordinate(COLUMN_COUNT);
                 int spawnY = generateCoordinate(ROW_COUNT);
@@ -77,7 +76,6 @@ public final class Main extends Application {
                 int b = random.nextInt(255);
                 int chance = 20 * (random.nextInt(2) + 2);
                 opponents.add(new Snake(spawnX, spawnY, Color.rgb(r, g, b), chance));
-                opponents_Dirs.add(Direction.RIGHT);
             }
 
             createFood();
@@ -123,7 +121,7 @@ public final class Main extends Application {
         }
     }
 
-    private void stopGame(GraphicsContext gc) {
+    private void stopGame(final GraphicsContext gc) {
         gameOver = true;
         gc.setFill(Color.RED);
         gc.setFont(new Font("", GAMEOVER_TEXT_SIZE));
@@ -151,13 +149,13 @@ public final class Main extends Application {
 
         for (Snake opponent: opponents) {
             int cell = snake.checkForAnotherSnake(opponent.getCells());
-            int opponent_collision = opponent.checkForAnotherSnake(snake.getCells());
+            int opponentCollision = opponent.checkForAnotherSnake(snake.getCells());
 
             if (cell > 1) {
                 opponent.deleteTail(cell);
             } else if (cell >= 0) {
 
-                if (opponent_collision >= 0 && opponent_collision <= 1) {
+                if (opponentCollision >= 0 && opponentCollision <= 1) {
                     gameOver = true;
                     stopGame(gc);
                     return;
@@ -166,8 +164,8 @@ public final class Main extends Application {
                 }
             }
 
-            if (opponent_collision > 0) {
-                snake.deleteTail(opponent_collision);
+            if (opponentCollision > 0) {
+                snake.deleteTail(opponentCollision);
             }
 
             for (Snake second_opponent: opponents) {
@@ -198,7 +196,7 @@ public final class Main extends Application {
             opponent.moveOpponents(COLUMN_COUNT, ROW_COUNT, barriers);
             if (opponent.getSize() == 0) {
                 opponents.remove(opponent);
-                OPPONENTS_COUNT--;
+                opponentsCount--;
             }
         }
 
@@ -265,11 +263,11 @@ public final class Main extends Application {
                 || checkFoodIntersectionForOpponents(food.getX(), food.getY()));
     }
 
-    private boolean checkFoodIntersectionForOpponents(int foodX, int foodY) {
+    private boolean checkFoodIntersectionForOpponents(final int foodX, final int foodY) {
         return opponents.stream().anyMatch(opponent -> opponent.checkForFoodIntersection(foodX, foodY));
     }
 
-    private int generateCoordinate(int maxValue) {
+    private int generateCoordinate(final int maxValue) {
         Random rand = new Random();
         int x;
         do {
