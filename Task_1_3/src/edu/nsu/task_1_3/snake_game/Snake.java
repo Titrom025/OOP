@@ -11,16 +11,18 @@ import java.util.Random;
 
 public final class Snake {
     private static final int OPPONENT_ATTEMPT_LIMIT = 20;
-    private final int CHANCE_TO_CHANGE_DIR;
+    private static final Color FIELD_COLOR = Color.rgb(191, 227, 78);
+
+    private final int chanceToChangeDir;
     private final List<SnakeCell> snake = new ArrayList<>();
-    private final Color SNAKE_COLOR;
-    private static Color FIELD_COLOR = Color.rgb(191, 227, 78);
+    private final Color snakeColor;
+
     private int size = 0;
     private Direction direction = Direction.LEFT;
 
-    public Snake(final int x, final int y, Color color, int chance) {
-        SNAKE_COLOR = color;
-        CHANCE_TO_CHANGE_DIR = chance;
+    public Snake(final int x, final int y, final Color color, final int chance) {
+        snakeColor = color;
+        chanceToChangeDir = chance;
         addCell(x, y);
         addCell(x, y);
         addCell(x, y);
@@ -131,8 +133,8 @@ public final class Snake {
         return barriers.stream().anyMatch(barrier -> barrier.getX() == snake.get(0).getX() && barrier.getY() == snake.get(0).getY());
     }
 
-    boolean checkForBarriersIntersectionByXY(final List<Barrier> barriers, int x, int y) {
-        return barriers.stream().anyMatch(barrier -> barrier.getX() == x && barrier.getY() == y);
+    boolean checkForBarriersIntersectionByXY(final List<Barrier> barriers, final int x, final int y) {
+        return barriers.stream().noneMatch(barrier -> barrier.getX() == x && barrier.getY() == y);
     }
 
     boolean checkForFoodIntersection(final int x, final int y) {
@@ -147,7 +149,7 @@ public final class Snake {
 
     }
 
-    int checkForAnotherSnake(List<SnakeCell> opponent) {
+    int checkForAnotherSnake(final List<SnakeCell> opponent) {
         Optional<SnakeCell> intersection = opponent.stream().filter(op -> op.getX() == getHeadX() && op.getY() == getHeadY()).findFirst();
         return intersection.map(opponent::indexOf).orElse(-1);
     }
@@ -155,7 +157,7 @@ public final class Snake {
 
     void drawSnake(final GraphicsContext gc, final int cellSize) {
         for (SnakeCell cell : snake) {
-            gc.setFill(SNAKE_COLOR);
+            gc.setFill(snakeColor);
 
             if (cell.getPosition() == 0) {
                 gc.fillOval(
@@ -338,10 +340,10 @@ public final class Snake {
         }
     }
 
-    void moveOpponents(final int COLUMN_COUNT, final int ROW_COUNT, final List<Barrier> barriers) {
+    void moveOpponents(final int columnCount, final int rowCount, final List<Barrier> barriers) {
 
         Random rand = new Random();
-        checkForBoundaryIntersection(COLUMN_COUNT, ROW_COUNT);
+        checkForBoundaryIntersection(columnCount, rowCount);
         boolean possibleToMove = false;
 
         Direction newDirection = direction;
@@ -351,7 +353,7 @@ public final class Snake {
                 size = 0;
                 break;
             }
-            if (rand.nextInt(100) >= CHANCE_TO_CHANGE_DIR) {
+            if (rand.nextInt(100) >= chanceToChangeDir) {
                 switch (rand.nextInt(4)) {
                     case 0 -> {
                         if (direction != Direction.RIGHT) {
@@ -380,17 +382,19 @@ public final class Snake {
             }
 
             switch (newDirection) {
-                case LEFT -> possibleToMove = !checkForBarriersIntersectionByXY(
+                case LEFT -> possibleToMove = checkForBarriersIntersectionByXY(
                         barriers, getHeadX() - 1, getHeadY());
 
-                case RIGHT -> possibleToMove = !checkForBarriersIntersectionByXY(
+                case RIGHT -> possibleToMove = checkForBarriersIntersectionByXY(
                         barriers, getHeadX() + 1, getHeadY());
 
-                case UP -> possibleToMove = !checkForBarriersIntersectionByXY(
+                case UP -> possibleToMove = checkForBarriersIntersectionByXY(
                         barriers, getHeadX(), getHeadY() - 1);
 
-                case DOWN -> possibleToMove = !checkForBarriersIntersectionByXY(
+                case DOWN -> possibleToMove = checkForBarriersIntersectionByXY(
                         barriers, getHeadX(), getHeadY() + 1);
+
+                default -> { }
             }
         }
 
