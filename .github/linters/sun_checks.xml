@@ -70,9 +70,9 @@
     <!-- Checks for Size Violations.                    -->
     <!-- See https://checkstyle.org/config_sizes.html -->
     <module name="FileLength"/>
-    <module name="LineLength">
-        <property name="fileExtensions" value="java"/>
-    </module>
+    <!-- <module name="LineLength"> -->
+        <!-- <property name="fileExtensions" value="java"/> -->
+    <!-- </module> -->
 
     <!-- Checks for whitespace                               -->
     <!-- See https://checkstyle.org/config_whitespace.html -->
@@ -133,7 +133,7 @@
 
         <!-- Checks for Size Violations.                    -->
         <!-- See https://checkstyle.org/config_sizes.html -->
-        <module name="MethodLength"/>
+        <!-- <module name="MethodLength"/> -->
         <module name="ParameterNumber"/>
 
         <!-- Checks for whitespace                               -->
@@ -168,8 +168,8 @@
         <module name="EqualsHashCode"/>
 <!--        <module name="HiddenField"/>-->
         <module name="IllegalInstantiation"/>
-        <module name="InnerAssignment"/>
-        <module name="MagicNumber"/>
+        <!-- <module name="InnerAssignment"/> -->
+        <!-- <module name="MagicNumber"/> -->
         <module name="MissingSwitchDefault"/>
         <module name="MultipleVariableDeclarations"/>
         <module name="SimplifyBooleanExpression"/>
