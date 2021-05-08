@@ -1,9 +1,9 @@
-//import com.google.gson.Gson;
-//import com.google.gson.reflect.TypeToken;
-
 import com.google.gson.Gson;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,14 +15,13 @@ public final class PizzaFactory {
     private int ordersNumber;
     private int stockNumber;
 
-    private transient static volatile List<Order> orderList;
+    private static transient volatile List<Order> orderList;
     private List<CookInfo> cookersInfo = new ArrayList<>();
     private List<DeliverymanInfo> deliverymenInfo = new ArrayList<>();
 
-    private transient static final List<Cook> COOKERS = new ArrayList<>();
-    private transient static final List<Deliveryman> DELIVERYMEN = new ArrayList<>();
-
-    private transient static final FactoryStatus FACTORY_STATUS = new FactoryStatus();
+    private static final transient List<Cook> COOKERS = new ArrayList<>();
+    private static final transient List<Deliveryman> DELIVERYMEN = new ArrayList<>();
+    private static final transient FactoryStatus FACTORY_STATUS = new FactoryStatus();
 
     void initThreads() {
         Stock stock = new Stock(stockNumber);
@@ -51,7 +50,7 @@ public final class PizzaFactory {
     static void checkForEnd() {
         while (true) {
             boolean cookersHasOrders = false;
-            boolean DeliveryHasOrders = false;
+            boolean deliveryHasOrders = false;
 
             try {
                 Thread.sleep(TIMEOUT);
@@ -68,12 +67,12 @@ public final class PizzaFactory {
 
             for (Deliveryman deliveryman: DELIVERYMEN) {
                 if (deliveryman.hasActiveOrders()) {
-                    DeliveryHasOrders = true;
+                    deliveryHasOrders = true;
                     break;
                 }
             }
 
-            if (orderList.size() == 0 && !cookersHasOrders && !DeliveryHasOrders) {
+            if (orderList.size() == 0 && !cookersHasOrders && !deliveryHasOrders) {
                 FACTORY_STATUS.setActive(false);
                 break;
             }
