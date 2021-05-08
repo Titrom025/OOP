@@ -14,16 +14,17 @@ public class PizzaFactory {
     private int ordersNumber;
     private int stockNumber;
 
-    private volatile transient List<Order> orderList;
-    private volatile transient Stock stock;
+    private static volatile transient List<Order> orderList;
     private List<CookInfo> cookersInfo = new ArrayList<>();
     private List<DeliverymanInfo> deliverymenInfo = new ArrayList<>();
 
-    private transient List<Cook> cookers = new ArrayList<>();
-    private transient List<Deliveryman> deliverymen = new ArrayList<>();
+    private static final transient List<Cook> cookers = new ArrayList<>();
+    private static final transient List<Deliveryman> deliverymen = new ArrayList<>();
+
+    private static final transient FactoryStatus isFactoryActive = new FactoryStatus();
 
     void initThreads() {
-        stock = new Stock(stockNumber);
+        Stock stock = new Stock(stockNumber);
         orderList = new ArrayList<>();
 
         for (int i = 1; i <= ordersNumber; i++) {
@@ -32,18 +33,50 @@ public class PizzaFactory {
         }
 
         for (CookInfo cooker: cookersInfo) {
-            Cook newCooker = new Cook(cooker.getId(), cooker.getWorkingTime(), orderList, stock);
+            Cook newCooker = new Cook(cooker.getId(), cooker.getWorkingTime(), orderList, stock, isFactoryActive);
             cookers.add(newCooker);
             newCooker.start();
         }
 
         for (DeliverymanInfo deliverymanInfo: deliverymenInfo) {
             Deliveryman deliveryman = new Deliveryman(deliverymanInfo.getId(), deliverymanInfo.getWorkingTime(),
-                    deliverymanInfo.getStorageSize(), stock);
+                    deliverymanInfo.getStorageSize(), stock, isFactoryActive);
             deliverymen.add(deliveryman);
             deliveryman.start();
         }
 
+    }
+
+    static void checkForEnd() {
+        while (true) {
+            boolean cookersHasOrders = false;
+            boolean DeliveryHasOrders = false;
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            for (Cook cook: cookers) {
+                if (cook.isHasActiveOrder()) {
+                    cookersHasOrders = true;
+                    break;
+                }
+            }
+
+            for (Deliveryman deliveryman: deliverymen) {
+                if (deliveryman.hasActiveOrders()) {
+                    DeliveryHasOrders = true;
+                    break;
+                }
+            }
+
+            if (orderList.size() == 0 && !cookersHasOrders && !DeliveryHasOrders) {
+                isFactoryActive.setActive(false);
+                break;
+            }
+        }
     }
 
     private static PizzaFactory readJsonFactory() throws IOException {
@@ -56,40 +89,12 @@ public class PizzaFactory {
         }
     }
 
-    private static void saveFactoryToJson(final PizzaFactory factory) {
-        Gson gson = new Gson();
-        String JSON = gson.toJson(factory);
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(JSON_NOTES_FILE))) {
-            bufferedWriter.write(JSON);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void main(final String[] args) throws IOException {
-        PizzaFactory ps = new PizzaFactory();
-
-        ps.stockNumber = 5;
-        ps.ordersNumber = 20;
-
-        List<CookInfo> cookers = new ArrayList<>();
-        cookers.add(new CookInfo(1, 7000));
-        cookers.add(new CookInfo(2, 8000));
-        cookers.add(new CookInfo(3, 6500));
-        ps.cookersInfo = cookers;
-
-        List<DeliverymanInfo> deliverymen = new ArrayList<>();
-        deliverymen.add(new DeliverymanInfo(1, 10000, 2));
-        ps.deliverymenInfo = deliverymen;
-
-        saveFactoryToJson(ps);
-
-
-
         PizzaFactory ls = readJsonFactory();
         ls.initThreads();
-    }
 
+        checkForEnd();
+    }
 }
 
 

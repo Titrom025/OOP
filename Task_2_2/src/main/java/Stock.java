@@ -6,7 +6,7 @@ public class Stock {
     private final int size;
     private final List<Order> storage;
 
-    Stock(int size) {
+    Stock(final int size) {
         this.size = size;
         storage = new ArrayList<>();
     }
