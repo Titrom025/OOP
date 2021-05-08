@@ -5,22 +5,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Deliveryman extends Thread {
-    @Getter private final int ID;
+public final class Deliveryman extends Thread {
+    private static final double TIME_NORMALIZE = 1000.0;
+    @Getter private final int workerId;
     @Getter private final int workingTime;
     @Getter private final int storageSize;
 
-    FactoryStatus isFactoryActive;
+    private FactoryStatus factoryStatus;
     private final Stock stock;
     private List<Order> storage = new ArrayList<>();
 
-    Deliveryman(final int ID, final int workingTime, final int backSize,
-                final Stock stock, final FactoryStatus isFactoryActive) {
-        this.ID = ID;
+    Deliveryman(final int workerId, final int workingTime, final int backSize,
+                final Stock stock, final FactoryStatus factoryStatus) {
+        this.workerId = workerId;
         this.workingTime = workingTime;
         this.storageSize = backSize;
         this.stock = stock;
-        this.isFactoryActive = isFactoryActive;
+        this.factoryStatus = factoryStatus;
     }
 
     boolean hasActiveOrders() {
@@ -30,12 +31,12 @@ public class Deliveryman extends Thread {
     @SneakyThrows
     @Override
     public void run() {
-        while (isFactoryActive.isActive()) {
+        while (factoryStatus.isActive()) {
             synchronized (stock) {
                 while (!stock.isEmpty() && storage.size() < storageSize) {
                     Order order = stock.getOrder();
                     storage.add(order);
-                    System.out.println("Order " + order.getId() + " - is delivering, time: " + (new Date().getTime() - order.getStartTime()) / 1000.0);
+                    System.out.println("Order " + order.getId() + " - is delivering, time: " + (new Date().getTime() - order.getStartTime()) / TIME_NORMALIZE);
                     order.setStatus(OrderStatus.DELIVERING);
                 }
             }
@@ -46,7 +47,7 @@ public class Deliveryman extends Thread {
                 while (storage.size() > 0) {
                     Order order = storage.get(0);
                     storage.remove(order);
-                    System.out.println("Order " + order.getId() + " - delivered, time: " + (new Date().getTime() - order.getStartTime()) / 1000.0);
+                    System.out.println("Order " + order.getId() + " - delivered, time: " + (new Date().getTime() - order.getStartTime()) / TIME_NORMALIZE);
                     order.setStatus(OrderStatus.COMPLETED);
                 }
             }

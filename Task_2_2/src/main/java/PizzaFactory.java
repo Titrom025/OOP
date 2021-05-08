@@ -1,27 +1,28 @@
 //import com.google.gson.Gson;
 //import com.google.gson.reflect.TypeToken;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class PizzaFactory {
+public final class PizzaFactory {
     private static final String JSON_NOTES_FILE = "factory.txt";
+    private static final int TIMEOUT = 100;
 
     private int ordersNumber;
     private int stockNumber;
 
-    private static volatile transient List<Order> orderList;
+    private transient static volatile List<Order> orderList;
     private List<CookInfo> cookersInfo = new ArrayList<>();
     private List<DeliverymanInfo> deliverymenInfo = new ArrayList<>();
 
-    private static final transient List<Cook> cookers = new ArrayList<>();
-    private static final transient List<Deliveryman> deliverymen = new ArrayList<>();
+    private transient static final List<Cook> COOKERS = new ArrayList<>();
+    private transient static final List<Deliveryman> DELIVERYMEN = new ArrayList<>();
 
-    private static final transient FactoryStatus isFactoryActive = new FactoryStatus();
+    private transient static final FactoryStatus FACTORY_STATUS = new FactoryStatus();
 
     void initThreads() {
         Stock stock = new Stock(stockNumber);
@@ -33,15 +34,15 @@ public class PizzaFactory {
         }
 
         for (CookInfo cooker: cookersInfo) {
-            Cook newCooker = new Cook(cooker.getId(), cooker.getWorkingTime(), orderList, stock, isFactoryActive);
-            cookers.add(newCooker);
+            Cook newCooker = new Cook(cooker.getId(), cooker.getWorkingTime(), orderList, stock, FACTORY_STATUS);
+            COOKERS.add(newCooker);
             newCooker.start();
         }
 
         for (DeliverymanInfo deliverymanInfo: deliverymenInfo) {
             Deliveryman deliveryman = new Deliveryman(deliverymanInfo.getId(), deliverymanInfo.getWorkingTime(),
-                    deliverymanInfo.getStorageSize(), stock, isFactoryActive);
-            deliverymen.add(deliveryman);
+                    deliverymanInfo.getStorageSize(), stock, FACTORY_STATUS);
+            DELIVERYMEN.add(deliveryman);
             deliveryman.start();
         }
 
@@ -53,19 +54,19 @@ public class PizzaFactory {
             boolean DeliveryHasOrders = false;
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(TIMEOUT);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            for (Cook cook: cookers) {
+            for (Cook cook: COOKERS) {
                 if (cook.isHasActiveOrder()) {
                     cookersHasOrders = true;
                     break;
                 }
             }
 
-            for (Deliveryman deliveryman: deliverymen) {
+            for (Deliveryman deliveryman: DELIVERYMEN) {
                 if (deliveryman.hasActiveOrders()) {
                     DeliveryHasOrders = true;
                     break;
@@ -73,7 +74,7 @@ public class PizzaFactory {
             }
 
             if (orderList.size() == 0 && !cookersHasOrders && !DeliveryHasOrders) {
-                isFactoryActive.setActive(false);
+                FACTORY_STATUS.setActive(false);
                 break;
             }
         }
@@ -81,7 +82,7 @@ public class PizzaFactory {
 
     private static PizzaFactory readJsonFactory() throws IOException {
         Gson gson = new Gson();
-        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(JSON_NOTES_FILE))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(JSON_NOTES_FILE))) {
             String fileContent = bufferedReader.readLine();
             return gson.fromJson(fileContent, PizzaFactory.class);
         } catch (FileNotFoundException e) {

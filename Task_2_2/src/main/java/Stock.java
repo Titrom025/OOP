@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.List;
 
-public class Stock {
+final public class Stock {
     private final int size;
     private final List<Order> storage;
 
@@ -15,7 +15,9 @@ public class Stock {
         return storage.size() == 0;
     }
 
-    boolean isNotFull() { return storage.size() < size; }
+    boolean isNotFull() {
+        return storage.size() < size;
+    }
 
     Order getOrder() {
         if (!isEmpty()) {
