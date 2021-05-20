@@ -56,4 +56,5 @@ jobs:
           VALIDATE_BASH: false
           VALIDATE_BASH_EXEC: false
           DEFAULT_BRANCH: master
+          VALIDATE_BASH: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

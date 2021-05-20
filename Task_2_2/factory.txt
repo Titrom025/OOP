@@ -1,0 +1,1 @@
+{"ordersNumber":20,"stockNumber":5,"cookersInfo":[{"id":1,"workingTime":1000},{"id":2,"workingTime":2000},{"id":3,"workingTime":1500}],"deliverymenInfo":[{"id":1,"workingTime":1000,"storageSize":2}]}
