@@ -36,6 +36,7 @@ public final class Stock {
      *         false - otherwise
      */
     boolean putOrder(final Order order) {
+
         if (isNotFull()) {
             storage.add(order);
             return true;

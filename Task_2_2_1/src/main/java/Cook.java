@@ -11,9 +11,11 @@ public final class Cook extends Thread {
     @Getter boolean hasActiveOrder = false;
     private final FactoryStatus isFactoryActive;
 
-
     private final List<Order> orders;
     private final Stock stock;
+
+    @Getter private long workingTimeSpent = 0;
+    @Getter private long idleTimeSpent = 0;
 
     Cook(final int workerId, final int workingTime, final List<Order> orders,
          final Stock stock, final FactoryStatus isFactoryActive) {
@@ -27,7 +29,9 @@ public final class Cook extends Thread {
     @SneakyThrows
     @Override
     public void run() {
+        long idleStartTime = 0;
         while (isFactoryActive.isActive()) {
+
             Order order = null;
             synchronized (orders) {
                 if (!orders.isEmpty()) {
@@ -40,9 +44,13 @@ public final class Cook extends Thread {
             }
 
             if (order != null) {
+                long workingStartTime = new Date().getTime();
                 sleep(workingTime);
                 System.out.println("Order " + order.getId() + " - waiting for storage, time: " + (new Date().getTime() - order.getStartTime()) / TIME_NORMALIZE);
                 order.setStatus(OrderStatus.WAITING_FOR_STOCK);
+                workingTimeSpent = workingTimeSpent + new Date().getTime() - workingStartTime;
+                idleStartTime = new Date().getTime();
+
                 while (true) {
                     synchronized (stock) {
                         if (stock.putOrder(order)) {
@@ -52,10 +60,15 @@ public final class Cook extends Thread {
                         }
                     }
                 }
-                hasActiveOrder = false;
+                idleTimeSpent = idleTimeSpent + (new Date().getTime()) - idleStartTime;
+
+                if (orders.isEmpty()) {
+                    hasActiveOrder = false;
+                }
             } else {
                 break;
             }
         }
+        System.out.printf("%d: %d/%d\n", workerId, idleTimeSpent, workingTimeSpent);
     }
 }
