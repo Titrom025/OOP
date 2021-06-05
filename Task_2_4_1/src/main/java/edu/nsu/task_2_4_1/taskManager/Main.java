@@ -2,20 +2,14 @@ package edu.nsu.task_2_4_1.taskManager;
 
 import edu.nsu.task_2_4_1.taskManager.configs.Config;
 import edu.nsu.task_2_4_1.taskManager.configs.GroupConfig;
+import edu.nsu.task_2_4_1.taskManager.configs.StudentConfig;
 import edu.nsu.task_2_4_1.taskManager.configs.TaskConfig;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.util.DelegatingScript;
-import org.apache.tools.ant.Task;
 import org.codehaus.groovy.control.CompilerConfiguration;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.ParseException;
-import java.util.List;
-import java.util.function.Function;
 
 public class Main {
 
@@ -34,53 +28,32 @@ public class Main {
 
         githubManager.downloadRepos(config);
 
-        for (GroupConfig group : config.getGroups()) {
-            checkTasks(group.getTasks(), group.getName(), "Roman");
-        }
+            for (GroupConfig group : config.getGroups()) {
+                for (TaskConfig task : group.getTasks()) {
+                    System.out.println("------------------------------------------------------");
+                    System.out.println("           | Lab " + task.getName() + "                          |");
+                    System.out.println("           | Build | Tests | Passed | Failed | Total |");
+                    for (StudentConfig student : group.getStudents()) {
+                        checkTasks(task, group.getName(), student.getName());
+                    }
 
+                }
+                System.out.println("------------------------------------------------------");
+        }
     }
 
-    public static void checkTasks(List<TaskConfig> tasks, String groupName, String userName)
+    public static void checkTasks(TaskConfig task, String groupName, String userName)
             throws IOException {
-        for (TaskConfig task : tasks) {
-            String taskName = task.getName();
-            boolean isBuild = gradleManager.build(groupName, userName, taskName);
+        String taskName = task.getName();
 
-            int[] tests = new int[] {0, 0, 0};
-//            if (isBuild) {
-//                tests = gradleManager.run(groupName, userName, taskName);
-//            }
+        boolean isBuild = gradleManager.build(groupName, userName, taskName);
 
-            boolean passedDeadline = true;
-//            parameters.setDaysPastDeadline(4);
-//            if (checkDeadline(taskName, task.getDeadline())) {
-//                passedDeadline = "+";
-//                parameters.setDaysPastDeadline(0);
-//            }
-//            parameters.setPointsForTask(task.getPoints());
-            int points = isBuild ? task.getPoints() : 0;
-            System.out.println("-----------------------------------------------------------------");
-            System.out.println(
-                    "       | Lab " + taskName + "                                         |");
-            System.out.println("       | Build | Tests | Passed | Up-to-date | Deadline | Total |");
-            System.out.println(
-                    userName
-                            + "  | "
-                            + (isBuild ? "+" : "-")
-                            + "     | "
-                            + tests[0]
-                            + "     | "
-                            + tests[1]
-                            + "      | "
-                            + tests[2]
-                            + "          | "
-                            + (passedDeadline ? "+" : "-")
-                            + "        | "
-                            + points
-                            + "     |");
-        }
+        int[] tests;
+        tests = gradleManager.getTestInfo(groupName, userName, taskName);
+
+        int points = isBuild ? task.getPoints() : 0;
+        System.out.printf("%-10s |   %s   | %3d   |  %3d   | %3d    | %3d   |\n",
+                userName, (isBuild ? "+" : "-"), tests[0], tests[1], tests[2], points);
+
     }
-
-
-
 }

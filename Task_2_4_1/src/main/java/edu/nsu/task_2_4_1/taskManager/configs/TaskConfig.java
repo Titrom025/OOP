@@ -8,6 +8,5 @@ import lombok.EqualsAndHashCode;
 @Data
 public class TaskConfig extends GroovyObjectSupport {
     private String name;
-    private String endDate;
     private int points;
 }
