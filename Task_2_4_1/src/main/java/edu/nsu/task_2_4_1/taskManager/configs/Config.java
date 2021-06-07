@@ -23,7 +23,7 @@ public final class Config {
             List<StudentConfig> students = new ArrayList<>();
             List<TaskConfig> tasks = new ArrayList<>();
 
-            for (Object studentConfig : groupConfig.students) {
+            for (Object studentConfig : groupConfig.getStudents()) {
                 StudentConfig item = new StudentConfig();
                 ((Closure) studentConfig).setDelegate(item);
                 ((Closure) studentConfig).setResolveStrategy(Closure.DELEGATE_FIRST);
@@ -31,7 +31,7 @@ public final class Config {
                 students.add(item);
             }
 
-            for (Object taskConfig : groupConfig.tasks) {
+            for (Object taskConfig : groupConfig.getTasks()) {
                 TaskConfig item = new TaskConfig();
                 ((Closure) taskConfig).setDelegate(item);
                 ((Closure) taskConfig).setResolveStrategy(Closure.DELEGATE_FIRST);

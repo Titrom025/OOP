@@ -11,8 +11,8 @@ import java.util.List;
 @Data
 public final class GroupConfig extends GroovyObjectSupport {
     private String name;
-    List<StudentConfig> students;
-    List<TaskConfig> tasks;
+    private List<StudentConfig> students;
+    private List<TaskConfig> tasks;
 
     private void student(final Closure closure) {
         StudentConfig studentConfig = new StudentConfig();
