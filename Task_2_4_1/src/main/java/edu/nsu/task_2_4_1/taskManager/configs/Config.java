@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class Config {
+public final class Config {
     private final List<GroupConfig> groups = new ArrayList<>();
 
-    public void group(Closure closure) {
+    public void group(final Closure closure) {
         GroupConfig config = new GroupConfig();
         closure.setDelegate(config);
         closure.setResolveStrategy(Closure.DELEGATE_FIRST);

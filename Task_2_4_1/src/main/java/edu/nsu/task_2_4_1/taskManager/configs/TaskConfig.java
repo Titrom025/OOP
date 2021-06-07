@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class TaskConfig extends GroovyObjectSupport {
+public final class TaskConfig extends GroovyObjectSupport {
     private String name;
     private int points;
 }

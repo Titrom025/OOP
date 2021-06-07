@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class StudentConfig extends GroovyObjectSupport {
+public final class StudentConfig extends GroovyObjectSupport {
     private String name;
     private String url;
 }

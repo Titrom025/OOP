@@ -11,22 +11,23 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-public class Main {
+class Main {
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(final String[] args) throws IOException, InterruptedException {
         CompilerConfiguration cc = new CompilerConfiguration();
         cc.setScriptBaseClass(DelegatingScript.class.getName());
 
         GroovyShell sh = new GroovyShell(Main.class.getClassLoader(), new Binding(), cc);
 
-        DelegatingScript script = (DelegatingScript) sh.parse(new File("src/main/groovy/description.groovy"));
+        DelegatingScript script = (DelegatingScript) sh.parse(
+                new File("src/main/groovy/description.groovy"));
 
         Config config = new Config();
         script.setDelegate(config);
         script.run();
         config.postProcess();
 
-        githubManager.downloadRepos(config);
+        GithubManager.downloadRepos(config);
 
             for (GroupConfig group : config.getGroups()) {
                 for (TaskConfig task : group.getTasks()) {
@@ -42,14 +43,14 @@ public class Main {
         }
     }
 
-    public static void checkTasks(TaskConfig task, String groupName, String userName)
+    public static void checkTasks(final TaskConfig task, final String groupName, final String userName)
             throws IOException {
         String taskName = task.getName();
 
-        boolean isBuild = gradleManager.build(groupName, userName, taskName);
+        boolean isBuild = GradleManager.build(groupName, userName, taskName);
 
         int[] tests;
-        tests = gradleManager.getTestInfo(groupName, userName, taskName);
+        tests = GradleManager.getTestInfo(groupName, userName, taskName);
 
         int points = isBuild ? task.getPoints() : 0;
         System.out.printf("%-10s |   %s   | %3d   |  %3d   | %3d    | %3d   |\n",

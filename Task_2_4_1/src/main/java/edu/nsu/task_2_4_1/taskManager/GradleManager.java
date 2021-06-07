@@ -1,6 +1,10 @@
 package edu.nsu.task_2_4_1.taskManager;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -8,11 +12,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class gradleManager {
+public final class GradleManager {
 
     private static final String GIT_DIRECTORY = "gitDirectory/";
 
-    public static boolean build(String groupName, String userName, String taskName) throws IOException {
+    public static boolean build(final String groupName, final String userName, final String taskName) throws IOException {
         String taskDir = GIT_DIRECTORY + groupName + "/" + userName + "/" + taskName;
         String command =  "./gradlew build";
 
@@ -35,7 +39,8 @@ public class gradleManager {
     }
 
 
-    public static int[] getTestInfo(String groupName, String userName, String taskName) throws IOException {
+    public static int[] getTestInfo(final String groupName, final String userName,
+                                    final String taskName) throws IOException {
         int[] result = new int[] {0, 0, 0};
 
         String testDir = GIT_DIRECTORY + groupName + "/" + userName + "/" + taskName + "/build/test-results/test/";
@@ -87,7 +92,7 @@ public class gradleManager {
         return result;
     }
 
-    private static Set<String> listFilesUsingJavaIO(String dir) {
+    private static Set<String> listFilesUsingJavaIO(final String dir) {
         return Stream.of(Objects.requireNonNull(new File(dir).listFiles()))
                 .filter(file -> !file.isDirectory())
                 .map(File::getName)
