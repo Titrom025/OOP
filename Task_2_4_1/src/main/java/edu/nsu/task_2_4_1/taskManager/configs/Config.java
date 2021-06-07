@@ -9,7 +9,7 @@ import java.util.List;
 public final class Config {
     private final List<GroupConfig> groups = new ArrayList<>();
 
-    public void group(final Closure closure) {
+    private void group(final Closure closure) {
         GroupConfig config = new GroupConfig();
         closure.setDelegate(config);
         closure.setResolveStrategy(Closure.DELEGATE_FIRST);

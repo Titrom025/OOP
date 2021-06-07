@@ -11,7 +11,10 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-class Main {
+final class Main {
+
+    private Main() {
+    }
 
     public static void main(final String[] args) throws IOException, InterruptedException {
         CompilerConfiguration cc = new CompilerConfiguration();

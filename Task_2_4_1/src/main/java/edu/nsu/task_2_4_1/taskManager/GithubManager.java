@@ -16,6 +16,9 @@ public final class GithubManager {
     private static final int TIMEOUT = 10;
     private static final String GIT_DIRECTORY = "gitDirectory/";
 
+    private GithubManager() {
+    }
+
     private static void deleteDirectory(final File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {
