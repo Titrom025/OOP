@@ -51,10 +51,8 @@ jobs:
         uses: github/super-linter@v3
         env:
           VALIDATE_ALL_CODEBASE: false
-          VALIDATE_JSCPD: false
-          VALIDATE_SHELL_SHFMT: false
-          VALIDATE_BASH: false
-          VALIDATE_BASH_EXEC: false
           DEFAULT_BRANCH: master
           VALIDATE_BASH: false
+          VALIDATE_BASH_EXEC: false
+          VALIDATE_SHELL_SHFMT: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
